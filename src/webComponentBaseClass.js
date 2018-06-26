@@ -6,16 +6,16 @@ import { createQuickAccess } from './tools.js';
  * @param {string} p_ComponentTemplate The name of the web component template
  */
 function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
-	const template = window.webComponentTemplates.get(p_ComponentTemplate);
+	const templateInstance = window.webComponentTemplates.get(p_ComponentTemplate);
 	// if we are using the shadyCSS polyfill, we must initialize that now
 	if (window.ShadyCSS) {
-		window.ShadyCSS.prepareTemplate(template, p_ComponentTemplate);
+		window.ShadyCSS.prepareTemplate(templateInstance, p_ComponentTemplate);
 		window.ShadyCSS.styleElement(p_ComponentInstance);
 	}
 
 	// create the shadow DOM root here
 	const shadowRoot = p_ComponentInstance.attachShadow({ mode: 'open' });
-	shadowRoot.appendChild(template.content.cloneNode(true));
+	shadowRoot.appendChild(templateInstance.content.cloneNode(true));
 }
 
 /**
@@ -26,7 +26,7 @@ function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
  */
 function ensureQuickAccess(p_ComponentInstance) {
 	if (!p_ComponentInstance.$) { // make sure we didn't do this already
-		p_ComponentInstance.$ = createQuickAccess(p_ComponentInstance, 'id');
+		p_ComponentInstance.$ = createQuickAccess(p_ComponentInstance.shadowRoot, 'id');
 		p_ComponentInstance.$$ = (p_Selector) => p_ComponentInstance.shadowRoot.querySelector(p_Selector);
 		p_ComponentInstance.$$$ = (p_Selector) => Array.from(p_ComponentInstance.shadowRoot.querySelectorAll(p_Selector));
 	}
@@ -51,11 +51,11 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 					const oldValue = p_ComponentInstance._properties[p_PropertyKey];
 					let toAttribute = () => '';
 					switch (property.type) {
-						case Array: p_ComponentInstance[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case Boolean: p_ComponentInstance[p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
-						case Number: p_ComponentInstance[p_PropertyKey] = Number(p_Value) || 0; toAttribute = (p_ConvertValue) => p_ConvertValue.toString(); break;
-						case Object: p_ComponentInstance[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case String: p_ComponentInstance[p_PropertyKey] = String(p_Value) || ''; toAttribute = (p_ConvertValue) => p_ConvertValue.toString(); break;
+						case Array: p_ComponentInstance._properties[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
+						case Boolean: p_ComponentInstance._properties[p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
+						case Number: p_ComponentInstance._properties[p_PropertyKey] = Number(p_Value) || 0; toAttribute = (p_ConvertValue) => p_ConvertValue.toString(); break;
+						case Object: p_ComponentInstance._properties[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
+						case String: p_ComponentInstance._properties[p_PropertyKey] = String(p_Value) || ''; toAttribute = (p_ConvertValue) => p_ConvertValue.toString(); break;
 					}
 					if (property.observer) {
 						if (p_ComponentInstance[property.observer]) {
@@ -111,7 +111,7 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 
 const base = 'web-component-base-element';
 
-export class webComponentBase extends HTMLElement {
+export class webComponentBaseClass extends HTMLElement {
 	/**
 	 * Get the name for the web component. Derived classes must override this
 	 * @returns {string} The name of this web component
