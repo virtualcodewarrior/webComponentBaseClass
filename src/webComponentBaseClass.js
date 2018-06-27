@@ -227,4 +227,12 @@ export class webComponentBaseClass extends HTMLElement {
 			p_Element.removeEventListener(p_EventName, p_Callback);
 		}
 	}
+
+	/**
+	 * recreate the quick access object using the current content of the shadow dom
+	 * use this when you manually add or remove items from the DOM
+	 */
+	refreshQuickAccess() {
+		this.$ = createQuickAccess(this.shadowRoot, 'id');
+	}
 }
