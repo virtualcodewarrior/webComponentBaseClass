@@ -1,4 +1,4 @@
-import { createQuickAccess } from './tools.js';
+import { createQuickAccess, dashesToCamelCase, camelCaseToDashes } from './tools.js';
 
 /**
  * Create the shadow DOM and attach it to the given web component instance
@@ -43,7 +43,7 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 		p_ComponentInstance._properties = {};
 		Object.keys(p_Properties).forEach((p_PropertyKey) => {
 			const property = p_Properties[p_PropertyKey];
-			const attributeName = p_PropertyKey;
+			const attributeName = camelCaseToDashes(p_PropertyKey);
 
 			Object.defineProperty(p_ComponentInstance, p_PropertyKey, {
 				get() { return p_ComponentInstance._properties[p_PropertyKey]; },
@@ -66,7 +66,7 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 							console.warn(`The observer with the name: '${property.observer}' was not found inside the class for web component ${p_ComponentInstance.constructor.is}. Make sure that you added a public function with the name '${property.observer}' to the class.`);
 						}
 					}
-					if (property.reflectAttribute) {
+					if (property.reflectToAttribute) {
 						if (p_ComponentInstance._properties[p_PropertyKey]) {
 							p_ComponentInstance.setAttribute(attributeName, toAttribute(p_ComponentInstance._properties[p_PropertyKey]));
 						} else {
@@ -131,7 +131,7 @@ export class webComponentBaseClass extends HTMLElement {
 	 * Get an array containing all attributes that have an observer attached
 	 * @returns {array} Array containing all attributes that have an observer
 	 */
-	static get observedAttributes() { return (this.properties) ? Object.keys(this.properties) : []; }
+	static get observedAttributes() { return (this.properties) ? Object.keys(this.properties).map((p_Name) => camelCaseToDashes(p_Name)) : []; }
 
 	/**
 	 * Constructor for this base class
@@ -141,6 +141,7 @@ export class webComponentBaseClass extends HTMLElement {
 		console.assert(this.constructor.is !== base, 'Error, make sure that the web component implements: statis get is() { return "name-of-your-web-component"; }');
 		createShadowDOM(this, this.constructor.template, this.constructor.properties);
 		this.eventHandlers = [];
+		console.log(this.constructor.observedAttributes);
 	}
 
 	/**
@@ -187,15 +188,43 @@ export class webComponentBaseClass extends HTMLElement {
 	 * @param {*} p_NewValue The new value for the attribute
 	 */
 	attributeChangedCallback(p_Attribute, p_OldValue, p_NewValue) {
+		const propertyName = dashesToCamelCase(p_Attribute);
 		ensureQuickAccess(this);
 		// boolean are handled differently because the absence of the value also means fale and the precense of the value also means true
-		if (this.constructor.properties[p_Attribute] && this.constructor.properties[p_Attribute].type === Boolean) {
+		if (this.constructor.properties[propertyName] && this.constructor.properties[propertyName].type === Boolean) {
 			p_OldValue = (p_OldValue === '' || p_OldValue !== 'false');
 			p_NewValue = (p_NewValue === '' || p_NewValue !== 'false');
 		}
 		// we set our variable and the setter will handle the rest
 		if (p_OldValue !== p_NewValue && this.hasAttribute(p_Attribute)) {
-			this[p_Attribute] = p_NewValue;
+			this[propertyName] = p_NewValue;
+		}
+	}
+
+	/**
+	 * Attach an event handler to the given element. This function will automatically clean all event handlers when the web component gets removed from the DOM
+	 * @param {HTMLElement} p_Element The element to which we are attaching the event handler
+	 * @param {string} p_EventName The name of the event (e.g. click, mousedown etc)
+	 * @param {function} p_Callback The handler function to be called for the event
+	 */
+	addAutoEventListener(p_Element, p_EventName, p_Callback) {
+		if (!this.eventHandlers.find((p_Handler) => p_Handler.element === p_Element && p_Handler.event === p_EventName && p_Handler.handler === p_Callback)) {
+			this.eventHandlers.push({ element: p_Element, event: p_EventName, handler: p_Callback });
+			p_Element.addEventListener(p_EventName, p_Callback);
+		}
+	}
+
+	/**
+	 * Remove an event handler that was previously attached by a call to addAutoEventListener
+	 * @param {HTMLElement} p_Element The element from which the event will be removed
+	 * @param {string} p_EventName The name of the event to remove
+	 * @param {function} p_Callback The callback that was previously added for the event
+	 */
+	removeAutoEventListener(p_Element, p_EventName, p_Callback) {
+		const eventIndex = this.eventHandlers.findIndex((p_Handler) => p_Handler.element === p_Element && p_Handler.event === p_EventName && p_Handler.handler === p_Callback);
+		if (eventIndex !== -1) {
+			this.eventHandlers.splice(eventIndex, 1);
+			p_Element.removeEventListener(p_EventName, p_Callback);
 		}
 	}
 }
