@@ -1,7 +1,8 @@
 {
  "scripts": {
   "server": "node ./node_modules/http-server/bin/http-server -c-1 -p 2211",
-  "start": "npm run server"
+  "start": "npm run server",
+  "build": "node build.js"
  },
  "devDependencies": {
   "babel-minify": "^0.4.3",
