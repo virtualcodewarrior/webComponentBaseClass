@@ -1,4 +1,4 @@
-import { webComponentBaseClass } from '../../src/webComponentBaseClass.js';
+import { webComponentBaseClass } from '../../dist/webComponentBaseClass.js';
 
 const componentName = 'my-element';
 window.customElements.define(componentName, class extends webComponentBaseClass {

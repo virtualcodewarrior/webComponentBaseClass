@@ -141,7 +141,6 @@ export class webComponentBaseClass extends HTMLElement {
 		console.assert(this.constructor.is !== base, 'Error, make sure that the web component implements: statis get is() { return "name-of-your-web-component"; }');
 		createShadowDOM(this, this.constructor.template, this.constructor.properties);
 		this.eventHandlers = [];
-		console.log(this.constructor.observedAttributes);
 	}
 
 	/**
