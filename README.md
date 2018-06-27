@@ -1,5 +1,9 @@
 # createWebComponent
-Library to simplify web component creation and reduce repetitive code for web components
+Library to simplify web component creation and reduce repetitive code for web components.
+I love web components, but some of it can be a bit cumbersome or repetitive to write especially if you want to use shadow dom.
+This library was created to simplify some of its creation and add some simple helper functions and objects to work with them after creation.
+This library doesn't add any fancy data binding features to keep it simple and I personally don't really like it to hide away the way data transfers between
+the DOM and JavaScript.
 
 ## Usage
 To use this library you will have to extend your web component class from the exported webComponentBaseClass:
@@ -69,25 +73,24 @@ This library has examples provided which also can be used for creating your own 
 See the examples directory in the repo.
 
 ## Utility functions and objects
-There is an number of extra utility functions available to you inside of the class, to make it easier to write your code.
+There is a number of extra utility functions available to you inside of the class, to make it easier to write your code.
 
 ### $ object
-The class has an utility object called & which can be accessed from within the class using this.$;
+The class has an utility object called $ which can be accessed from within the class using this.$.
 The object will contain all the elements that are declared with an 'id' attribute within the template definition of the web component.
-For instance when you define the following template content :
+For instance when you define the following template content:
 ```
 <template id="my-element">
 	<input id="example-input">
 	<pre id="output"></pre>
 	<input id="exampleOutput">
-	<button id="btn-1">
-	<button id="test-button">
-	<button id="Bla">
+	<button id="btn-1"></button>
+	<button id="test-button"></button>
+	<button id="Bla"></button>
 	<div id="some-container">
-		<span id="container-content">
+		<span id="container-content"></span>
 	</div>
 </template>
-
 ```
 Then the content of this.$ will be
 ```
@@ -113,17 +116,17 @@ In the code you can use this to directly access those elements without having to
 	...
 ```
 
-If you remove elements with an id or add new elements with an id through code, you should call refreshQuickAccess to recreate the object
+If you remove elements with an id or add new elements with an id through code, you should call refreshQuickAccess to recreate the object.
 
 ### $$ function
 The $$(selector) function is a shorthand function for this.shadowRoot.querySelector(selector). The query is limited to the shadow DOM.
-This can be used everywhere you want to do querySelector on the shadowDom only
+This can be used everywhere you want to do querySelector on the shadowDom only.
 For instance calling ```const input = this.$$('input');``` on the web component template definition used in the previous example, will return
 the input element with the id of 'example-input'. If the selector cannot find a match undefined will be returned.
 
 ### $$$ function
-The $$$(selector) function is a sharthand for Array.from(this.shadowRoot.querySelectorAll(selector)). The query is limited to the shadow DOM.
-This can be used everywhere you want to do querySelectorAll on the shadowDom only and want to get back an array instead of an 'array like' object that is normally returned from querySelectorAll. This means you can use forEach and all the other array functions directly on the result.
+The $$$(selector) function is a shorthand for Array.from(this.shadowRoot.querySelectorAll(selector)). The query is limited to the shadow DOM.
+This can be used everywhere you want to do querySelectorAll on the shadowDom only and want to get back an array instead of an 'array like' object that is normally returned from querySelectorAll. This means you can use forEach and all the other array functions directly on the result. If no objects matching the selector can be found, an empty array will be returned.
 e.g.
 ```
 this.$$$('button').forEach((p_Button) => { p_Button.disabled = true; }); // disable all our buttons
@@ -145,3 +148,22 @@ removeAutoEventListener(HTMLElement, EventName, CallbackFunction). This function
 
 ### refreshQuickAccess function
 call this function to rebuild the map of id to elements after you have manually modified the content of the shadow dom by removing or adding elements that have an id attribute.
+
+## onAttached and onDetached
+In some cases it might be useful to know when a web component has been added or removed from the DOM for a script using the web component as opposed to the scripts inside of the web component.
+If a script needs to do additional things after a web component was added or removed, it can define a function that will be called after a web component has been attached or detached from the DOM.
+
+e.g.
+```
+const myElement = document.createElement('my-element');
+myElement.onAttached = () => {
+	// initialize extra stuff here after the element has been added to the DOM
+}
+
+myElement.onDetached = () => {
+	// cleanup here after the element has been removed from the DOM
+}
+
+document.body.appendChild(myElement);
+
+```
