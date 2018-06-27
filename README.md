@@ -5,6 +5,30 @@ This library was created to simplify some of its creation and add some simple he
 This library doesn't add any fancy data binding features to keep it simple and I personally don't really like it to hide away the way data transfers between
 the DOM and JavaScript.
 
+## Development
+The following steps can be used if you want to develop on this library
+### Installation
+Clone the git repo
+```
+git clone https://github.com/virtualcodewarrior/createWebComponent.git
+```
+Install dev dependencies
+```
+npm install
+```
+### Build
+Building is only needed to minify this library.
+The following command will minify the src files and put them in a dist folder:
+```
+npm run build
+```
+### Manual Testing
+To manually test the examples you can start a local web server using:
+```
+npm start
+```
+This will start a web server on your local machine on port 2211. If you want to use another port you can modify package.json and set a different port. Open a browser to http://localhost:2211/examples/ to see the library in action. This uses the minified library output, so you would have to build it first.
+
 ## Usage
 To use this library you will have to extend your web component class from the exported webComponentBaseClass:
 
