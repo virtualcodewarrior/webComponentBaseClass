@@ -29,6 +29,17 @@ npm start
 ```
 This will start a web server on your local machine on port 2211. If you want to use another port you can modify package.json and set a different port. Open a browser to http://localhost:2211/examples/ to see the library in action. This uses the minified library output, so you would have to build it first.
 
+### Automatic testing
+To run the unit tests once, run
+```
+npm test
+```
+
+To run the unit tests in watch mode, run
+```
+npm run watch-test
+```
+
 ## Usage
 To use this library you will have to extend your web component class from the exported webComponentBaseClass:
 

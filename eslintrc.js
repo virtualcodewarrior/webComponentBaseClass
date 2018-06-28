@@ -1,9 +1,13 @@
-/* global module */
+/* eslint-disable */
 module.exports = {
 	env: {
 		browser: true, // we are targetting browser environments
 		es6: true, // we use es6
+		jasmine: true, // we use jasmine for testing
 	},
+	plugins: [
+		'jasmine',
+	],
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 6,
@@ -11,7 +15,7 @@ module.exports = {
 	// 'extends': 'eslint:recommended', // don't use any default settings, we will specify all settings explicitely
 	rules: {
 		'no-cond-assign': ['error'],			        //	disallow assignment operators in conditional expressions
-		'no-console': 'off', // ['error'],				        //	disallow the use of console
+		'no-console': 'off', // ['error'],				//	disallow the use of console
 		'no-constant-condition': ['error'],		        //	disallow constant expressions in conditions
 		'no-control-regex': ['error'],			        //	disallow control characters in regular expressions
 		'no-debugger': ['error'],				        //	disallow the use of debugger
@@ -244,5 +248,18 @@ module.exports = {
 		'symbol-description': 'off',			        //	require symbol descriptions
 		'template-curly-spacing': ['error', 'never'],	//	autofixable require or disallow spacing around embedded expressions of template strings
 		'yield-star-spacing': ['error', { before: false, after: true }],	// autofixable require or disallow spacing around the * in yield* expressions
+		// jasmine specific rules
+		'jasmine/no-focused-tests': ['error'],          // dont check in fits, fdescribes
+		'jasmine/expect-matcher': ['error'],            // expect() should always have a matcher. no expect("something")
+		'jasmine/expect-single-argument': ['error'],    // expect should have a single argument
+		'jasmine/missing-expect': ['error'],            // test does not test anything
+		'jasmine/no-describe-variables': ['error'],     // no vars in describe scope. avoids memory leaks
+		'jasmine/no-assign-spyon': ['error'],           // dont assign spyon to variable
+		'jasmine/no-expect-in-setup-teardown': ['error'],                   // should not check things in teardowns
+		'jasmine/no-global-setup': ['error'],           // no setup/teardown outside a describe
+		'jasmine/no-spec-dupes': ['error'],             // no duplicate tests
+		'jasmine/no-suite-callback-args': ['error'],    // suite function should not have arguments
+		'jasmine/no-unsafe-spy': ['error'],             // no global spys
+		'jasmine/prefer-jasmine-matcher': ['error'],    // use jasmine matchers
 	},
 };

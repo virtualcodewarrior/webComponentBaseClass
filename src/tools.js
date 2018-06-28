@@ -3,10 +3,10 @@
  * @param {string} p_String The input string that will be converted
  * @returns {string} An output string in camel case
  */
-export function dashesToCamelCase(p_String) { return p_String.replace(/-([a-z0-9])/g, (p_Char) => p_Char[1].toUpperCase()); }
+export function dashesToCamelCase(p_String) { return p_String.replace(/-([a-z0-9A-Z])/g, (p_Char) => p_Char[1].toUpperCase()).replace(/-$/g, ''); }
 
 /**
- * Converts a camel case string to an all lower case string containing dashes. e.g. testString becomes test-sring and Test becomes test
+ * Converts a camel case string to an all lower case string containing dashes. e.g. testString becomes test-string and Test becomes test
  * @param {string} p_String The input string that will be converted
  * @returns {string} The resulting all lower case string
  */

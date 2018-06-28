@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<template id="test-element">
+	<div id="exampleInput"></div>
+	<pre id="output"></pre>
+</template>
+<script>
+	(function storeTemplate() {
+		const template = document.currentScript.ownerDocument.querySelector('template');
+		window.webComponentTemplates = window.webComponentTemplates || new Map();
+		window.webComponentTemplates.set(template.getAttribute('id'), template);
+	})();
+</script>
