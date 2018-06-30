@@ -87,21 +87,23 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 The template definition for the web component should be constructed like this:
 ```
 <!DOCTYPE html>
-<template id="my-element">
-	<!-- The id must match the componentName as specified in the javascript file -->
-	<style>
-		/* put you styling here */
-	</style>
-	<!-- The content of the template goes here -->
-</template>
-<script>
-	(function storeTemplate() {
-		const template = document.currentScript.ownerDocument.querySelector('template');
-		window.webComponentTemplates = window.webComponentTemplates || new Map();
-		window.webComponentTemplates.set(template.getAttribute('id'), template);
-	})();
-</script>
-<script type="module" src="./my-element.js"></script>
+<div>
+	<template id="my-element">
+		<!-- The id must match the componentName as specified in the javascript file -->
+		<style>
+			/* put you styling here */
+		</style>
+		<!-- The content of the template goes here -->
+	</template>
+	<script>
+		(function storeTemplate() {
+			const template = document.currentScript.parentNode.querySelector('template');
+			window.webComponentTemplates = window.webComponentTemplates || new Map();
+			window.webComponentTemplates.set(template.getAttribute('id'), template);
+		})();
+	</script>
+	<script type="module" src="./my-element.js"></script>
+</div>
 ```
 
 This library has examples provided which also can be used for creating your own web components.

@@ -23,5 +23,7 @@
   "karma-spec-reporter": "0.0.32",
   "walk": "^2.3.13"
  },
- "dependencies": {}
+ "dependencies": {
+  "@webcomponents/webcomponentsjs": "^2.0.2"
+ }
 }
