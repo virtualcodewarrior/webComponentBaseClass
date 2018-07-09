@@ -3,14 +3,14 @@ Library to simplify web component creation and reduce repetitive code for web co
 I love web components, but some of it can be a bit cumbersome or repetitive to write especially if you want to use shadow dom.
 This library was created to simplify some of its creation and add some simple helper functions and objects to work with them after creation.
 This library doesn't add any fancy data binding features to keep it simple and I personally don't really like it to hide away the way data transfers between
-the DOM and JavaScript.
+the DOM and JavaScript. Some of the helper functions are inspired by polymer.
 
 ## Development
 The following steps can be used if you want to develop on this library
 ### Installation
 Clone the git repo
 ```
-git clone https://github.com/virtualcodewarrior/createWebComponent.git
+git clone https://github.com/virtualcodewarrior/webComponentBaseClass.git
 ```
 Install dev dependencies
 ```
@@ -143,7 +143,7 @@ this.$ = {
 }
 ```
 Note that id's that contain dashes '-' will be converted to camel case to make it easier to access them.
-In the code you can use this to directly access those elements without having to requery them. e.g.
+In the code you can use this to directly access those elements without having to re-query them. e.g.
 
 ```
 	...

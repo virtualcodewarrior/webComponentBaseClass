@@ -3,9 +3,10 @@ import { createQuickAccess, dashesToCamelCase, camelCaseToDashes } from './tools
 /**
  * Create the shadow DOM and attach it to the given web component instance
  * @param {HTMLElement} p_ComponentInstance The web component instance to which we are attaching the shadow DOM
- * @param {string} p_ComponentTemplate The name of the web component template
+ * @param {string} p_ComponentTemplate The id of the web component template
  */
 function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
+	// retrieve the correct template from our map of previously stored templates
 	const templateInstance = window.webComponentTemplates.get(p_ComponentTemplate);
 	// if we are using the shadyCSS polyfill, we must initialize that now
 	if (window.ShadyCSS) {
@@ -20,9 +21,9 @@ function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
 
 /**
  * Create quick access members for this component. This function will add the possibility to access child elements that have an id, through
- * the $ member, it also allows to do a querySelector on the shadow dom through the $$ function and it will ass querySelectorAll through the $$$ function
+ * the $ member, it also allows to do a querySelector on the shadow dom through the $$ function and it will add querySelectorAll through the $$$ function
  * The $$$ function will return the child members as an array and not as an node list
- * @param {HTMLElement} p_ComponentInstance The component for which we are creating the quick access members
+ * @param {webComponentBaseClass} p_ComponentInstance The component for which we are creating the quick access members
  */
 function ensureQuickAccess(p_ComponentInstance) {
 	if (!p_ComponentInstance.$) { // make sure we didn't do this already
@@ -34,13 +35,12 @@ function ensureQuickAccess(p_ComponentInstance) {
 
 /**
  * Initialize the web component after it has been added to the DOM
- * @param {HTMLElement} p_ComponentInstance The component instance we are initializing
+ * @param {webComponentBaseClass} p_ComponentInstance The component instance we are initializing
  * @param {object} p_Properties The object that contains any web component specific properties
  */
 function handleConnected(p_ComponentInstance, p_Properties) {
 	ensureQuickAccess(p_ComponentInstance);
 	if (p_Properties) {
-		p_ComponentInstance._properties = {};
 		Object.keys(p_Properties).forEach((p_PropertyKey) => {
 			const property = p_Properties[p_PropertyKey];
 			const attributeName = camelCaseToDashes(p_PropertyKey);
@@ -49,13 +49,13 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 				get() { return p_ComponentInstance._properties[p_PropertyKey]; },
 				set(p_Value) {
 					const oldValue = p_ComponentInstance._properties[p_PropertyKey];
-					let toAttribute = () => '';
+					let toAttribute = (p_ConvertValue) => p_ConvertValue.toString();
 					switch (property.type) {
 						case Array: p_ComponentInstance._properties[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
 						case Boolean: p_ComponentInstance._properties[p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
-						case Number: p_ComponentInstance._properties[p_PropertyKey] = Number(p_Value) || 0; toAttribute = (p_ConvertValue) => p_ConvertValue.toString(); break;
+						case Number: p_ComponentInstance._properties[p_PropertyKey] = Number(p_Value) || 0; break;
 						case Object: p_ComponentInstance._properties[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case String: p_ComponentInstance._properties[p_PropertyKey] = String(p_Value) || ''; toAttribute = (p_ConvertValue) => p_ConvertValue.toString(); break;
+						case String: p_ComponentInstance._properties[p_PropertyKey] = String(p_Value) || ''; break;
 					}
 					if (property.observer) {
 						if (p_ComponentInstance[property.observer]) {
@@ -123,7 +123,7 @@ export class webComponentBaseClass extends HTMLElement {
 	 */
 	static get template() { return this.is; }
 	/**
-	 * Get the properties for this web component. Derived classes can ovverride this if they want to provide properties. By default there are no properties
+	 * Get the properties for this web component. Derived classes can override this if they want to provide properties. By default there are no properties
 	 * @returns {object} The properties object
 	 */
 	static get properties() { return {}; }
@@ -138,21 +138,25 @@ export class webComponentBaseClass extends HTMLElement {
 	 */
 	constructor() {
 		super();
-		console.assert(this.constructor.is !== base, 'Error, make sure that the web component implements: statis get is() { return "name-of-your-web-component"; }');
-		createShadowDOM(this, this.constructor.template, this.constructor.properties);
+		this._properties = {};
+		this.$ = null;
+		this.$$ = () => null;
+		this.$$$ = () => [];
+		console.assert(this.constructor.is !== base, 'Error, make sure that the web component implements: static get is() { return "name-of-your-web-component"; }');
+		createShadowDOM(this, this.constructor.template);
 		this.eventHandlers = [];
 	}
 
 	/**
-	 * Called by the syste,m when the web component has been added to the DOM
+	 * Called by the system when the web component has been added to the DOM
 	 */
 	connectedCallback() {
 		handleConnected(this, this.constructor.properties);
-		// this function should be implemented INSIDE the derrived cass, if you want to do additional initializiation after the component gets attached to the DOM
+		// this function should be implemented INSIDE the derived cass, if you want to do additional initialization after the component gets attached to the DOM
 		if (this.attached) {
 			this.attached();
 		}
-		// this function should be implemented OUTSIDE the derrived cass, if you want to do additional initializiation after the component gets attached to the DOM
+		// this function should be implemented OUTSIDE the derived cass, if you want to do additional initialization after the component gets attached to the DOM
 		if (this.onAttached) {
 			this.onAttached();
 		}
@@ -168,7 +172,7 @@ export class webComponentBaseClass extends HTMLElement {
 	 * Called by the system when the web component has been removed from the DOM
 	 */
 	disconnectedCallback() {
-		// this function should be implemented INSIDE the derrived class when needed to handle the component being removed from the DOM
+		// this function should be implemented INSIDE the derived class when needed to handle the component being removed from the DOM
 		if (this.detached) {
 			this.detached();
 		}
@@ -189,7 +193,7 @@ export class webComponentBaseClass extends HTMLElement {
 	attributeChangedCallback(p_Attribute, p_OldValue, p_NewValue) {
 		const propertyName = dashesToCamelCase(p_Attribute);
 		ensureQuickAccess(this);
-		// boolean are handled differently because the absence of the value also means fale and the precense of the value also means true
+		// boolean are handled differently because the absence of the value also means false and the presence of the value also means true
 		if (this.constructor.properties[propertyName] && this.constructor.properties[propertyName].type === Boolean) {
 			p_OldValue = (p_OldValue === '' || p_OldValue !== 'false');
 			p_NewValue = (p_NewValue === '' || p_NewValue !== 'false');
@@ -203,7 +207,7 @@ export class webComponentBaseClass extends HTMLElement {
 	/**
 	 * Attach an event handler to the given element. This function will automatically clean all event handlers when the web component gets removed from the DOM
 	 * @param {HTMLElement} p_Element The element to which we are attaching the event handler
-	 * @param {string} p_EventName The name of the event (e.g. click, mousedown etc)
+	 * @param {string} p_EventName The name of the event (e.g. click, mouse down etc)
 	 * @param {function} p_Callback The handler function to be called for the event
 	 */
 	addAutoEventListener(p_Element, p_EventName, p_Callback) {

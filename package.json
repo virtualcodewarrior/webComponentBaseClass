@@ -7,6 +7,7 @@
   "watch-test": "node ./node_modules/karma/bin/karma start karma.conf.js --watch"
  },
  "devDependencies": {
+  "@webcomponents/webcomponentsjs": "^2.0.2",
   "babel-minify": "^0.4.3",
   "babel-preset-minify": "^0.4.3",
   "eslint": "^5.0.1",
@@ -22,8 +23,5 @@
   "karma-jasmine-html-reporter": "^1.1.0",
   "karma-spec-reporter": "0.0.32",
   "walk": "^2.3.13"
- },
- "dependencies": {
-  "@webcomponents/webcomponentsjs": "^2.0.2"
  }
 }
