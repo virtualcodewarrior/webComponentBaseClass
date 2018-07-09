@@ -1,4 +1,6 @@
 node_modules/
-dist/
 .vscode/
 .idea/
+
+dist/
+web-component-base-class-*.tgz

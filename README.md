@@ -1,9 +1,17 @@
-# createWebComponent
+# webComponentBaseClass
 Library to simplify web component creation and reduce repetitive code for web components.
 I love web components, but some of it can be a bit cumbersome or repetitive to write especially if you want to use shadow dom.
 This library was created to simplify some of its creation and add some simple helper functions and objects to work with them after creation.
 This library doesn't add any fancy data binding features to keep it simple and I personally don't really like it to hide away the way data transfers between
 the DOM and JavaScript. Some of the helper functions are inspired by polymer.
+
+## Production
+The following steps can be used to install for production
+### Installation
+```
+npm install web-component-base-class
+```
+
 
 ## Development
 The following steps can be used if you want to develop on this library

@@ -1,10 +1,35 @@
 {
+ "name": "web-component-base-class",
+ "version": "v0.1.0",
+ "description": "Base class to simplify the creation of web components",
+ "keywords": [
+  "webComponents",
+  "ShadowDOM",
+  "customElements"
+ ],
+ "homepage": "https://github.com/virtualcodewarrior/webComponentBaseClass",
+ "bugs": {
+  "url": "https://github.com/virtualcodewarrior/webComponentBaseClass/issues"
+ },
+ "license": "MIT",
+ "author": {
+  "name": "Rodney Draaisma"
+ },
  "scripts": {
   "server": "node ./node_modules/http-server/bin/http-server -c-1 -p 2211",
   "start": "npm run server",
   "build": "node build.js",
   "test": "node ./node_modules/karma/bin/karma start karma.conf.js --single-run --log-level debug",
-  "watch-test": "node ./node_modules/karma/bin/karma start karma.conf.js --watch"
+  "watch-test": "node ./node_modules/karma/bin/karma start karma.conf.js --watch",
+  "prepublish": "npm run build"
+ },
+ "files": [
+  "dist",
+  "examples"
+ ],
+ "repository": {
+  "type": "git",
+  "url": "https://github.com/virtualcodewarrior/webComponentBaseClass.git"
  },
  "devDependencies": {
   "@webcomponents/webcomponentsjs": "^2.0.2",
