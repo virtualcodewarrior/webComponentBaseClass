@@ -51,10 +51,10 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 					const oldValue = p_ComponentInstance._properties[p_PropertyKey];
 					let toAttribute = (p_ConvertValue) => p_ConvertValue.toString();
 					switch (property.type) {
-						case Array: p_ComponentInstance._properties[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
+						case Array: p_ComponentInstance._properties[p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : Array.isArray(p_Value) ? p_Value : []; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
 						case Boolean: p_ComponentInstance._properties[p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
 						case Number: p_ComponentInstance._properties[p_PropertyKey] = Number(p_Value) || 0; break;
-						case Object: p_ComponentInstance._properties[p_PropertyKey] = p_Value; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
+						case Object: p_ComponentInstance._properties[p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : (typeof p_Value === 'object') ? p_Value : {}; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
 						case String: p_ComponentInstance._properties[p_PropertyKey] = String(p_Value) || ''; break;
 					}
 					if (property.observer) {
