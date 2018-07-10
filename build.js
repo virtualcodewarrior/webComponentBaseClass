@@ -15,7 +15,7 @@ walker.on('file', (p_Root, p_Stat, p_Next) => {
 	const fileContent = fs.readFileSync(path.resolve(p_Root, p_Stat.name));
 	const info = minify(fileContent, { mangle: { keepClassName: true } }, { sourceType: 'module', sourceMaps: true });
 	// for some reason babel doesn't add the source map line, so do it here manually
-	fs.writeFileSync(path.resolve(outputPath, p_Stat.name), `${info.code}\n//@ sourceMappingURL=${p_Stat.name}.map`);
+	fs.writeFileSync(path.resolve(outputPath, p_Stat.name), `${info.code}\n//# sourceMappingURL=${p_Stat.name}.map`);
 	// for some reason babel doesn't do this, even if I set the appropriate options
 	// so set the source here manually
 	info.map.sources[0] = p_Stat.name;
