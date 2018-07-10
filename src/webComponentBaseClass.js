@@ -79,10 +79,11 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 
 		Object.keys(p_Properties).forEach((p_PropertyKey) => {
 			const property = p_Properties[p_PropertyKey];
+			const attributeName = camelCaseToDashes(p_PropertyKey);
 			let userInitialized;
 
-			if (p_ComponentInstance.hasAttribute(p_PropertyKey)) {
-				userInitialized = (property.type === Boolean) ? p_ComponentInstance.getAttribute(p_PropertyKey) !== 'false' : p_ComponentInstance.getAttribute(p_PropertyKey);
+			if (p_ComponentInstance.hasAttribute(attributeName)) {
+				userInitialized = p_ComponentInstance.getAttribute(attributeName);
 			}
 
 			if (property.reflectToAttribute || p_ComponentInstance[p_PropertyKey] === undefined) {
