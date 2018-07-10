@@ -21,7 +21,7 @@
   "build": "node build.js",
   "test": "node ./node_modules/karma/bin/karma start karma.conf.js --single-run --log-level debug",
   "watch-test": "node ./node_modules/karma/bin/karma start karma.conf.js --watch",
-  "prepublish": "npm run build"
+  "prepare": "npm run build"
  },
  "files": [
   "dist",
