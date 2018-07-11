@@ -1,0 +1,6 @@
+#ignore build output
+dist/*
+#ignore coverage test results
+coverage/*
+#ignore node modules
+node_modules/*

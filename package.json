@@ -19,8 +19,11 @@
   "server": "node ./node_modules/http-server/bin/http-server -c-1 -p 2211",
   "start": "npm run server",
   "build": "node build.js",
-  "test": "node ./node_modules/karma/bin/karma start karma.conf.js --single-run --log-level debug",
+  "lint": "node ./node_modules/eslint/bin/eslint.js --color -c ./eslintrc.js \"src/**/*.js\" \"test/**/*.js\"",
+  "unittest": "node ./node_modules/karma/bin/karma start karma.conf.js --single-run",
   "watch-test": "node ./node_modules/karma/bin/karma start karma.conf.js --watch",
+  "coverage": "node ./node_modules/karma/bin/karma start karma.conf.js coverage --single-run",
+  "test": "npm run lint && npm run unittest",
   "prepare": "npm run build"
  },
  "files": [
@@ -32,6 +35,7 @@
   "url": "https://github.com/virtualcodewarrior/webComponentBaseClass.git"
  },
  "devDependencies": {
+  "@webcomponents/html-imports": "github:webcomponents/html-imports",
   "@webcomponents/webcomponentsjs": "^2.0.2",
   "babel-minify": "^0.4.3",
   "babel-preset-minify": "^0.4.3",
@@ -42,6 +46,7 @@
   "jasmine": "^3.1.0",
   "karma": "^2.0.4",
   "karma-chrome-launcher": "^2.2.0",
+  "karma-coverage": "^1.1.2",
   "karma-firefox-launcher": "^1.1.0",
   "karma-jasmine": "^1.1.2",
   "karma-jasmine-es6": "0.0.3",

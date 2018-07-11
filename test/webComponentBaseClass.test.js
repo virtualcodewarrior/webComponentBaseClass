@@ -1,11 +1,13 @@
 import { webComponentBaseClass } from '../src/webComponentBaseClass.js';
 
-
 describe('creates proper web components', () => {
-	let link = null;
+	const container = document.createElement('div');
+	const elementContainer = document.createElement('div');
+	container.appendChild(elementContainer);
+	const head = document.querySelector('head');
 	let element = null;
 	beforeAll((done) => {
-		link = document.createElement('link');
+		const link = document.createElement('link');
 		link.rel = 'import';
 		link.href = './base/test/resources/testTemplate.html';
 		link.onload = () => {
@@ -15,19 +17,30 @@ describe('creates proper web components', () => {
 				constructor() { super(); }
 				static get properties() { return {}; }
 			});
-			element = document.createElement('test-element');
-			element.onAttached = () => {
-				done();
-			};
-			document.body.appendChild(element);
+			done();
 		};
-		document.body.appendChild(link);
+
+		document.body.appendChild(container);
+		head.appendChild(link);
 	});
 
 	afterAll(() => {
-		link.parentNode.removeChild(link);
-		element.parentNode.removeChild(element);
+		document.body.removeChild(container);
+		Array.from(document.querySelectorAll('link[rel="import"]')).forEach((p_Element) => p_Element.parentNode.removeChild(p_Element));
 	});
+
+	beforeEach((done) => {
+		element = document.createElement('test-element');
+		elementContainer.appendChild(element);
+		element.onAttached = () => {
+			done();
+		};
+	});
+
+	afterEach(() => {
+		elementContainer.innerHTML = '';
+	});
+
 
 	it('create a web component template', () => {
 		expect(element).not.toBe(undefined);

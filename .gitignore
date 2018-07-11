@@ -4,3 +4,4 @@ node_modules/
 
 dist/
 web-component-base-class-*.tgz
+coverage/
