@@ -58,7 +58,11 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 						case String: p_ComponentInstance._properties[p_PropertyKey] = String(p_Value) || ''; break;
 					}
 					if (property.observer) {
-						if (p_ComponentInstance[property.observer]) {
+						if (typeof property.observer === 'function') {
+							if (oldValue !== p_ComponentInstance._properties[p_PropertyKey]) {
+								property.observer(p_ComponentInstance, p_ComponentInstance._properties[p_PropertyKey], oldValue);
+							}
+						} else if (p_ComponentInstance[property.observer]) {
 							if (oldValue !== p_ComponentInstance._properties[p_PropertyKey]) {
 								p_ComponentInstance[property.observer](p_ComponentInstance._properties[p_PropertyKey], oldValue);
 							}
@@ -88,7 +92,7 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 
 			if (property.reflectToAttribute || p_ComponentInstance[p_PropertyKey] === undefined) {
 				// use the user specified value if it was specified
-				if (userInitialized) {
+				if (userInitialized !== undefined) {
 					switch (property.type) {
 						case Array: p_ComponentInstance[p_PropertyKey] = JSON.parse(userInitialized); break;
 						case Boolean: p_ComponentInstance[p_PropertyKey] = userInitialized !== 'false'; break;
