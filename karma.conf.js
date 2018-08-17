@@ -65,7 +65,7 @@ module.exports = function(config) {
 		files: [
 			'node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js',
 			'node_modules/@webcomponents/html-imports/html-imports.min.js',
-			{ pattern: 'node_modules/@webcomponents/**/*.js', watched: false, served: true, included: false, nocache: true },
+			{ pattern: 'node_modules/@webcomponents/**/*.*', watched: false, served: true, included: false, nocache: true },
 			{ pattern: 'src/**/*.js', type: 'module', watched: true, served: true, included: false, nocache: true },
 			{ pattern: 'test/**/*.html', type: 'module', watched: true, served: true, included: false, nocache: true },
 			{ pattern: 'test/**/*.js', type: 'module', watched: true, served: true, included: true, nocache: true },

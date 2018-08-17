@@ -142,6 +142,13 @@ describe('creates proper web components', () => {
 		div.innerHTML = '<test-element id="attribs1" string="init1" number=1 boolean object=\'{ "htmlContent": 1 }\' array=\'["a", "b", "c"]\'></test-element>';
 		div.innerHTML += '<test-element id="attribs2" string-default="init2" number-default=2 boolean-default object-default=\'{ "htmlContent": 2 }\' array-default=\'["d", "e"]\'></test-element>';
 		div.innerHTML += '<test-element id="attribs3" string-reflect-default="init3" number-reflect-default=3 boolean-reflect-default object-reflect-default=\'{ "htmlContent": 3 }\' array-reflect-default=\'["f", "g", "h", "i"]\'></test-element>';
+		div.innerHTML += '<test-element id="attribs4"></test-element>';
+		const testElement4 = div.querySelector('#attribs4');
+		testElement4.string = 'test4';
+		testElement4.number = 123;
+		testElement4.boolean = true;
+		testElement4.object = { myobject: 'testing' };
+		testElement4.array = [1, 2, 3, 5, 8, 13, 21];
 		elementContainer.appendChild(div);
 		element = document.createElement('test-element');
 		elementContainer.appendChild(element);
@@ -510,6 +517,32 @@ describe('creates proper web components', () => {
 		expect(attributeElements[2].booleanObserved).toEqual(false);
 		expect(attributeElements[2].objectObserved).toEqual({});
 		expect(attributeElements[2].arrayObserved).toEqual([]);
+
+		expect(attributeElements[3].string).toEqual('test4');
+		expect(attributeElements[3].number).toEqual(123);
+		expect(attributeElements[3].boolean).toEqual(true);
+		expect(attributeElements[3].object).toEqual({ myobject: 'testing' });
+		expect(attributeElements[3].array).toEqual([1, 2, 3, 5, 8, 13, 21]);
+		expect(attributeElements[3].stringDefault).toEqual('default');
+		expect(attributeElements[3].numberDefault).toEqual(10);
+		expect(attributeElements[3].booleanDefault).toEqual(true);
+		expect(attributeElements[3].objectDefault).toEqual({ content: 5 });
+		expect(attributeElements[3].arrayDefault).toEqual([0, 1, 2, 3]);
+		expect(attributeElements[3].stringReflect).toEqual('');
+		expect(attributeElements[3].numberReflect).toEqual(0);
+		expect(attributeElements[3].booleanReflect).toEqual(false);
+		expect(attributeElements[3].objectReflect).toEqual({});
+		expect(attributeElements[3].arrayReflect).toEqual([]);
+		expect(attributeElements[3].stringReflectDefault).toEqual('reflect default');
+		expect(attributeElements[3].numberReflectDefault).toEqual(11);
+		expect(attributeElements[3].booleanReflectDefault).toEqual(true);
+		expect(attributeElements[3].objectReflectDefault).toEqual({ content: 6 });
+		expect(attributeElements[3].arrayReflectDefault).toEqual([7, 8, 9, 0]);
+		expect(attributeElements[3].stringObserved).toEqual('');
+		expect(attributeElements[3].numberObserved).toEqual(0);
+		expect(attributeElements[3].booleanObserved).toEqual(false);
+		expect(attributeElements[3].objectObserved).toEqual({});
+		expect(attributeElements[3].arrayObserved).toEqual([]);
 	});
 
 	it('should be able to add manually added entries to quick access', () => {

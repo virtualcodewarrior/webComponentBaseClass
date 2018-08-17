@@ -41,9 +41,13 @@ function ensureQuickAccess(p_ComponentInstance) {
 function handleConnected(p_ComponentInstance, p_Properties) {
 	ensureQuickAccess(p_ComponentInstance);
 	if (p_Properties) {
+		const originalValues = {};
+
 		Object.keys(p_Properties).forEach((p_PropertyKey) => {
 			const property = p_Properties[p_PropertyKey];
 			const attributeName = camelCaseToDashes(p_PropertyKey);
+
+			originalValues[p_PropertyKey] = p_ComponentInstance[p_PropertyKey];
 
 			Object.defineProperty(p_ComponentInstance, p_PropertyKey, {
 				get() { return p_ComponentInstance._properties[p_PropertyKey]; },
@@ -85,7 +89,49 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 			const property = p_Properties[p_PropertyKey];
 			const attributeName = camelCaseToDashes(p_PropertyKey);
 			let userInitialized;
+			let originalValue = originalValues[p_PropertyKey] || null;
 
+			if (originalValue) {
+				switch (property.type) {
+					case Array:
+						if (Array.isArray(originalValue)) {
+							p_ComponentInstance[p_PropertyKey] = originalValue;
+						} else {
+							originalValue = null;
+						}
+						break;
+					case Boolean:
+						if (typeof originalValue === 'boolean') {
+							p_ComponentInstance[p_PropertyKey] = originalValue;
+						} else {
+							originalValue = null;
+						}
+						break;
+					case Number:
+						if (typeof originalValue === 'number') {
+							p_ComponentInstance[p_PropertyKey] = originalValue;
+						} else {
+							originalValue = null;
+						}
+						break;
+					case Object:
+						if (typeof originalValue === 'object') {
+							p_ComponentInstance[p_PropertyKey] = originalValue;
+						} else {
+							originalValue = null;
+						}
+						break;
+					case String:
+						if (typeof originalValue === 'string') {
+							p_ComponentInstance[p_PropertyKey] = originalValue;
+						} else {
+							originalValue = null;
+						}
+						break;
+				}
+			}
+
+			/* if (originalValue === null)  { */
 			if (p_ComponentInstance.hasAttribute(attributeName)) {
 				userInitialized = p_ComponentInstance.getAttribute(attributeName);
 			}
@@ -94,22 +140,43 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 				// use the user specified value if it was specified
 				if (userInitialized !== undefined) {
 					switch (property.type) {
-						case Array: p_ComponentInstance[p_PropertyKey] = JSON.parse(userInitialized); break;
-						case Boolean: p_ComponentInstance[p_PropertyKey] = userInitialized !== 'false'; break;
-						case Number: p_ComponentInstance[p_PropertyKey] = Number(userInitialized); break;
-						case Object: p_ComponentInstance[p_PropertyKey] = JSON.parse(userInitialized); break;
-						case String: p_ComponentInstance[p_PropertyKey] = String(userInitialized); break;
+						case Array:
+							p_ComponentInstance[p_PropertyKey] = JSON.parse(userInitialized);
+							break;
+						case Boolean:
+							p_ComponentInstance[p_PropertyKey] = userInitialized !== 'false';
+							break;
+						case Number:
+							p_ComponentInstance[p_PropertyKey] = Number(userInitialized);
+							break;
+						case Object:
+							p_ComponentInstance[p_PropertyKey] = JSON.parse(userInitialized);
+							break;
+						case String:
+							p_ComponentInstance[p_PropertyKey] = String(userInitialized);
+							break;
 					}
 				} else { // use the default value
 					switch (property.type) {
-						case Array: p_ComponentInstance[p_PropertyKey] = property.value || []; break;
-						case Boolean: p_ComponentInstance[p_PropertyKey] = property.value || false; break;
-						case Number: p_ComponentInstance[p_PropertyKey] = property.value || 0; break;
-						case Object: p_ComponentInstance[p_PropertyKey] = property.value || {}; break;
-						case String: p_ComponentInstance[p_PropertyKey] = property.value || ''; break;
+						case Array:
+							p_ComponentInstance[p_PropertyKey] = property.value || [];
+							break;
+						case Boolean:
+							p_ComponentInstance[p_PropertyKey] = property.value || false;
+							break;
+						case Number:
+							p_ComponentInstance[p_PropertyKey] = property.value || 0;
+							break;
+						case Object:
+							p_ComponentInstance[p_PropertyKey] = property.value || {};
+							break;
+						case String:
+							p_ComponentInstance[p_PropertyKey] = property.value || '';
+							break;
 					}
 				}
 			}
+			// }
 		});
 	}
 }
