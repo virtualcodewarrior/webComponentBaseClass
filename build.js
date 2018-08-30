@@ -1,24 +1,43 @@
 /* eslint-env node */
-const minify = require('babel-minify');
+/* eslint { no-console: off } */
 const fs = require('fs-extra');
-const walk = require('walk');
+const minifier = require('babel-minify');
 const path = require('path');
 
-const inputPath = 'src';
-const outputPath = 'dist';
+const buildSrcPath = path.resolve('./');
+const targetPath = path.resolve('./dist');
 
-fs.ensureDirSync(outputPath);
-const walker = walk.walk(inputPath, { followLinks: false });
-fs.emptyDirSync(outputPath);
+console.log(`Cleaning target path at ${targetPath}`);
+if (fs.existsSync(targetPath)) {
+	fs.removeSync(targetPath);
+}
+fs.ensureDirSync(targetPath);
 
-walker.on('file', (p_Root, p_Stat, p_Next) => {
-	const fileContent = fs.readFileSync(path.resolve(p_Root, p_Stat.name));
-	const info = minify(fileContent, { mangle: { keepClassName: true } }, { sourceType: 'module', sourceMaps: true });
-	// for some reason babel doesn't add the source map line, so do it here manually
-	fs.writeFileSync(path.resolve(outputPath, p_Stat.name), `${info.code}\n//# sourceMappingURL=${p_Stat.name}.map`);
-	// for some reason babel doesn't do this, even if I set the appropriate options
-	// so set the source here manually
-	info.map.sources[0] = p_Stat.name;
-	fs.writeFileSync(path.resolve(outputPath, `${p_Stat.name}.map`), JSON.stringify(info.map));
-	p_Next();
-});
+// minification function
+const minify = (p_Src, p_Dst) => {
+	// test if the file is a js or jsm file
+	const result = /\.jsm?$/.test(p_Src);
+	// if it is such a file, try to minify it
+	if (result) {
+		// minify javascript files, assume modules and create a source map
+		const minResult = minifier(fs.readFileSync(p_Src, 'utf8'), { mangle: { keepClassName: true } }, {
+			sourceType: 'module',
+			sourceMaps: true,
+		});
+
+		const fileName = path.basename(p_Dst);
+		// for some reason babel doesn't add the source map line, so do it here manually
+		fs.outputFileSync(p_Dst, `${minResult.code}\n//# sourceMappingURL=${fileName}.map`);
+		// for some reason babel doesn't do this, even if I set the appropriate options so set the source here manually
+		minResult.map.sources[0] = fileName;
+		// write the map file
+		fs.outputFileSync(`${p_Dst}.map`, JSON.stringify(minResult.map));
+	}
+
+	// return false if we minified the file (and thus it was already copied to the proper location) or true when the file still needs to be copied
+	return !result;
+};
+
+// use copy sync with a filter that calls minify to do minification at the same time
+console.log(`Copy and minify files from src (${buildSrcPath}/src) to target (${targetPath})`);
+fs.copySync(`${buildSrcPath}/src`, targetPath, { filter: minify, preserveTimestamps: true });
