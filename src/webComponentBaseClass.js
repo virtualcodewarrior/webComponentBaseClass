@@ -230,13 +230,13 @@ export class webComponentBaseClass extends HTMLElement {
 		}
 		// this function should be implemented OUTSIDE the derived cass, if you want to do additional initialization after the component gets attached to the DOM
 		if (this.onAttached) {
-			this.onAttached();
+			this.onAttached(this);
 		}
 
 		// setter to set the onAttached function, this setter only exist after the component has been attached
 		Object.defineProperty(this, 'onAttached', {
 			get() { return undefined; },
-			set(p_Callback) { p_Callback(); },
+			set(p_Callback) { p_Callback(this); },
 		});
 	}
 
@@ -250,7 +250,7 @@ export class webComponentBaseClass extends HTMLElement {
 		}
 		// this function can be implemented OUTSIDE of the derived class, if you want to be notified if the component has been removed from the DOM
 		if (this.onDetached) {
-			this.onDetached();
+			this.onDetached(this);
 		}
 		// remove any auto event handler that was added
 		this.eventHandlers.forEach((p_Handler) => { p_Handler.element.removeEventListener(p_Handler.event, p_Handler.handler); });
