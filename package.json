@@ -1,6 +1,6 @@
 {
  "name": "web-component-base-class",
- "version": "v0.1.10",
+ "version": "v0.1.11",
  "description": "Base class to simplify the creation of web components",
  "keywords": [
   "webComponents",

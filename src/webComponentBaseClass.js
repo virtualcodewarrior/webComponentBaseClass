@@ -267,8 +267,8 @@ export class webComponentBaseClass extends HTMLElement {
 		ensureQuickAccess(this);
 		// boolean are handled differently because the absence of the value also means false and the presence of the value also means true
 		if (this.constructor.properties[propertyName] && this.constructor.properties[propertyName].type === Boolean) {
-			p_OldValue = (p_OldValue === '' || p_OldValue !== 'false');
-			p_NewValue = (p_NewValue === '' || p_NewValue !== 'false');
+			p_OldValue = !!(p_OldValue === '' || (p_OldValue && p_OldValue !== 'false'));
+			p_NewValue = !!(p_NewValue === '' || (p_NewValue && p_NewValue !== 'false'));
 		}
 		// we set our variable and the setter will handle the rest
 		if (p_OldValue !== p_NewValue) {
