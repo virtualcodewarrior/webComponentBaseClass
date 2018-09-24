@@ -271,7 +271,7 @@ export class webComponentBaseClass extends HTMLElement {
 			p_NewValue = (p_NewValue === '' || p_NewValue !== 'false');
 		}
 		// we set our variable and the setter will handle the rest
-		if (p_OldValue !== p_NewValue && this.hasAttribute(p_Attribute)) {
+		if (p_OldValue !== p_NewValue) {
 			this[propertyName] = p_NewValue;
 		}
 	}
