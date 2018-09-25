@@ -57,9 +57,9 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 					switch (property.type) {
 						case Array: p_ComponentInstance._properties[p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : Array.isArray(p_Value) ? p_Value : []; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
 						case Boolean: p_ComponentInstance._properties[p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
-						case Number: p_ComponentInstance._properties[p_PropertyKey] = Number(p_Value) || 0; break;
+						case Number: p_ComponentInstance._properties[p_PropertyKey] = ((p_Value === undefined) ? 0 : Number(p_Value)) || 0; break;
 						case Object: p_ComponentInstance._properties[p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : (typeof p_Value === 'object') ? p_Value : {}; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case String: p_ComponentInstance._properties[p_PropertyKey] = String(p_Value) || ''; break;
+						case String: p_ComponentInstance._properties[p_PropertyKey] = ((p_Value === undefined || p_Value === null) ? '' : String(p_Value)) || ''; break;
 					}
 					if (property.observer) {
 						if (typeof property.observer === 'function') {
