@@ -53,12 +53,18 @@ To use this library you will have to extend your web component class from the ex
 ```
 import { webComponentBaseClass } from '../../src/webComponentBaseClass.js';
 
+const changeHandlerKey = Symbol('changeHandler');
+
 const componentName = 'my-element';
 window.customElements.define(componentName, class extends webComponentBaseClass {
 	static get is() { return componentName; }
 	constructor() {
 		super();
 		// extra required initialization goes here ...
+    
+    	// change observer implementation example for a property
+		this[changeHandlerKey] = (p_NewValue, p_OldValue) => {
+        }
 	}
 
 	// here we add some properties to this web component
@@ -68,7 +74,7 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 				type: String, // (required) the type of the property, one of Array, Boolean, Number, Object, String
 				value: 'value', // (optional) default value for the property
 				reflectToAttribute: true, // (optional) indicate if you want the component attribute to always reflect the current property value
-				observer: '_myChangeHandler', // (optional) the name of a function in the class to be called when the value of the property is changed
+				observer: changeHandlerKey, // (optional) the name or a symbol for a function in the class to be called when the value of the property is changed
 			},
 			// add as many properties as you need ...
 		};
@@ -85,11 +91,8 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 		// extra cleanup that only can be done after an instance of the class has been removed from the DOM
 	}
 
-	// change observer implementation example for a property
-	_myChangeHandler(p_NewValue, p_OldValue) {
-	}
-	
-	// NEW in V1:  template to use with this web component
+	// string representation of the template to use with this web component
+	// note that the whole content should be wrapped within a template element
 	static get template() {
 		return `
 			<template>

@@ -1,12 +1,18 @@
 import { webComponentBaseClass } from '../../dist/webComponentBaseClass.js';
 // import { webComponentBaseClass } from '../../src/webComponentBaseClass.js';
 
+const changeHandlerKey = Symbol('changeHandler');
 const componentName = 'my-element';
 window.customElements.define(componentName, class extends webComponentBaseClass {
 	static get is() { return componentName; }
 	constructor() {
 		super();
 		// extra required initialization goes here ...
+
+		// change observer implementation example for a property
+		this[changeHandlerKey] = (p_NewValue, p_OldValue) => {
+			this.$.output.textContent += `The component property 'propertyName' for web component ${this.constructor.is}, was changed from ${p_OldValue} to ${p_NewValue}\n`;
+		}
 	}
 
 	// here we add some properties to this web component
@@ -16,7 +22,7 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 				type: String, // (required) the type of the property, one of Array, Boolean, Number, Object, String
 				value: 'value', // (optional) default value for the property
 				reflectToAttribute: true, // (optional) indicate if you want the component attribute to always reflect the current property value
-				observer: '_myChangeHandler', // (optional) the name of a function in the class to be called when the value of the property is changed
+				observer: changeHandlerKey, // (optional) the name or symbol of a function in the class to be called when the value of the property is changed
 			},
 			// add as many properties as you need
 		};
@@ -37,11 +43,6 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 	// optional callback function that will be called after this instance of the web component has been removed from the DOM
 	detached() {
 		console.log(`web component ${this.constructor.is} was removed from the DOM`);
-	}
-
-	// change observer implementation example for a property
-	_myChangeHandler(p_NewValue, p_OldValue) {
-		this.$.output.textContent += `The component property 'propertyName' for web component ${this.constructor.is}, was changed from ${p_OldValue} to ${p_NewValue}\n`;
 	}
 
 	static get template() {

@@ -12,7 +12,7 @@ describe('creates proper web components', () => {
 		window.customElements.define(customElementName, class extends webComponentBaseClass {
 			static get is() { return customElementName; }
 			static get template() {
-				return `<template id="test-element">
+				return `<template>
 					<div class="test" id="example-input"></div>
 					<pre class="test" id="output"></pre>
 					</template>`;
