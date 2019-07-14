@@ -1,5 +1,7 @@
 import { createQuickAccess, dashesToCamelCase, camelCaseToDashes } from './tools.js';
 
+const propertiesKey = Symbol('properties');
+
 /**
  * Create the shadow DOM and attach it to the given web component instance
  * @param {HTMLElement} p_ComponentInstance The web component instance to which we are attaching the shadow DOM
@@ -7,12 +9,9 @@ import { createQuickAccess, dashesToCamelCase, camelCaseToDashes } from './tools
  */
 function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
 	// retrieve the correct template from our map of previously stored templates
-	const templateInstance = window.webComponentTemplates.get(p_ComponentTemplate);
-	// if we are using the shadyCSS polyfill, we must initialize that now
-	if (window.ShadyCSS) {
-		window.ShadyCSS.prepareTemplate(templateInstance, p_ComponentTemplate);
-		window.ShadyCSS.styleElement(p_ComponentInstance);
-	}
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = p_ComponentTemplate.trim();
+	const templateInstance = tempDiv.firstChild;
 
 	// create the shadow DOM root here
 	const shadowRoot = p_ComponentInstance.attachShadow({ mode: 'open' });
@@ -50,33 +49,33 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 			originalValues[p_PropertyKey] = p_ComponentInstance[p_PropertyKey];
 
 			Object.defineProperty(p_ComponentInstance, p_PropertyKey, {
-				get() { return p_ComponentInstance._properties[p_PropertyKey]; },
+				get() { return p_ComponentInstance[propertiesKey][p_PropertyKey]; },
 				set(p_Value) {
-					const oldValue = p_ComponentInstance._properties[p_PropertyKey];
+					const oldValue = p_ComponentInstance[propertiesKey][p_PropertyKey];
 					let toAttribute = (p_ConvertValue) => p_ConvertValue.toString();
 					switch (property.type) {
-						case Array: p_ComponentInstance._properties[p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : Array.isArray(p_Value) ? p_Value : []; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case Boolean: p_ComponentInstance._properties[p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
-						case Number: p_ComponentInstance._properties[p_PropertyKey] = ((p_Value === undefined) ? 0 : Number(p_Value)) || 0; break;
-						case Object: p_ComponentInstance._properties[p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : (typeof p_Value === 'object') ? p_Value : {}; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case String: p_ComponentInstance._properties[p_PropertyKey] = ((p_Value === undefined || p_Value === null) ? '' : String(p_Value)) || ''; break;
+						case Array: p_ComponentInstance[propertiesKey][p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : Array.isArray(p_Value) ? p_Value : []; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
+						case Boolean: p_ComponentInstance[propertiesKey][p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
+						case Number: p_ComponentInstance[propertiesKey][p_PropertyKey] = ((p_Value === undefined) ? 0 : Number(p_Value)) || 0; break;
+						case Object: p_ComponentInstance[propertiesKey][p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : (typeof p_Value === 'object') ? p_Value : {}; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
+						case String: p_ComponentInstance[propertiesKey][p_PropertyKey] = ((p_Value === undefined || p_Value === null) ? '' : String(p_Value)) || ''; break;
 					}
 					if (property.observer) {
 						if (typeof property.observer === 'function') {
-							if (oldValue !== p_ComponentInstance._properties[p_PropertyKey]) {
-								property.observer(p_ComponentInstance, p_ComponentInstance._properties[p_PropertyKey], oldValue);
+							if (oldValue !== p_ComponentInstance[propertiesKey][p_PropertyKey]) {
+								property.observer(p_ComponentInstance, p_ComponentInstance[propertiesKey][p_PropertyKey], oldValue);
 							}
 						} else if (p_ComponentInstance[property.observer]) {
-							if (oldValue !== p_ComponentInstance._properties[p_PropertyKey]) {
-								p_ComponentInstance[property.observer](p_ComponentInstance._properties[p_PropertyKey], oldValue);
+							if (oldValue !== p_ComponentInstance[propertiesKey][p_PropertyKey]) {
+								p_ComponentInstance[property.observer](p_ComponentInstance[propertiesKey][p_PropertyKey], oldValue);
 							}
 						} else {
 							console.warn(`The observer with the name: '${property.observer}' was not found inside the class for web component ${p_ComponentInstance.constructor.is}. Make sure that you added a public function with the name '${property.observer}' to the class.`);
 						}
 					}
 					if (property.reflectToAttribute) {
-						if (p_ComponentInstance._properties[p_PropertyKey]) {
-							p_ComponentInstance.setAttribute(attributeName, toAttribute(p_ComponentInstance._properties[p_PropertyKey]));
+						if (p_ComponentInstance[propertiesKey][p_PropertyKey]) {
+							p_ComponentInstance.setAttribute(attributeName, toAttribute(p_ComponentInstance[propertiesKey][p_PropertyKey]));
 						} else {
 							p_ComponentInstance.removeAttribute(attributeName);
 						}
@@ -185,15 +184,16 @@ const base = 'web-component-base-element';
 
 export class webComponentBaseClass extends HTMLElement {
 	/**
-	 * Get the name for the web component. Derived classes must override this
-	 * @returns {string} The name of this web component
+	 * Get the name for the web component. Must be implemented by the class that extends from webComponentBaseClass
+	 * @returns {string} The name of the web component
 	 */
 	static get is() { return base; }
 	/**
-	 * Get the name for the template. In general this should be the same as the is value
-	 * @returns {string} The name of the template to be used with the web component
+	 * Get the template. This will return empty string by default so the class that extends from this must provide its own template
+	 * This should be HTML code as a string wrapped within a template (e.g. <template>My template content...</template>
+	 * @returns {string} The template to be used with the web component as a string
 	 */
-	static get template() { return this.is; }
+	static get template() { return ''; }
 	/**
 	 * Get the properties for this web component. Derived classes can override this if they want to provide properties. By default there are no properties
 	 * @returns {object} The properties object
@@ -210,7 +210,7 @@ export class webComponentBaseClass extends HTMLElement {
 	 */
 	constructor() {
 		super();
-		this._properties = {};
+		this[propertiesKey] = {};
 		this.$ = null;
 		this.$$ = () => null;
 		this.$$$ = () => [];
@@ -233,7 +233,8 @@ export class webComponentBaseClass extends HTMLElement {
 			this.onAttached(this);
 		}
 
-		// setter to set the onAttached function, this setter only exist after the component has been attached
+		// setter to set the onAttached function, this setter only exist after the component has been attached and replaces the onAttached member
+		// this will make sure that onAttached gets called immediately if the component was already attached
 		Object.defineProperty(this, 'onAttached', {
 			get() { return undefined; },
 			set(p_Callback) { p_Callback(this); },
@@ -305,7 +306,7 @@ export class webComponentBaseClass extends HTMLElement {
 
 	/**
 	 * recreate the quick access object using the current content of the shadow dom
-	 * use this when you manually add or remove items from the DOM
+	 * use this when you manually add items to or remove items from the DOM
 	 */
 	refreshQuickAccess() {
 		this.$ = createQuickAccess(this.shadowRoot, 'id');
