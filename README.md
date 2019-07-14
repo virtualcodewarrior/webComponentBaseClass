@@ -12,7 +12,6 @@ The following steps can be used to install for production
 npm install web-component-base-class
 ```
 
-
 ## Development
 The following steps can be used if you want to develop on this library
 ### Installation
@@ -96,39 +95,8 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 			<template>
 				<style>
 					/* put you styling here */
-					.exampleElement {
-						position: relative;
-						display: flex;
-						flex-direction: column;
-						margin: 1em;
-					}
-			
-					.exampleElement span {
-						box-sizing: border-box;
-						display: block;
-						position: relative;
-						width: 100%;
-						height: 20px;
-					}
-			
-					#output {
-						box-sizing: border-box;
-						width: 100%;
-						height: 300px;
-						overflow: auto;
-						box-shadow: inset 0 0 6px;
-						padding: 1em;
-					}
 				</style>
 				<!-- The content of the template goes here -->
-				<div class="exampleElement">
-					<span></span>
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
-				<input id="exampleInput">
-				<pre id="output"></pre>
 			</template>`;
 	}
 });
