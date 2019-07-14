@@ -1,7 +1,8 @@
 /* eslint-env node */
 /* eslint { no-console: off } */
 const fs = require('fs-extra');
-const minifier = require('babel-minify');
+// const minifier = require('babel-minify');
+const minifier = require('terser').minify;
 const path = require('path');
 
 const buildSrcPath = path.resolve('./');
@@ -19,19 +20,32 @@ const minify = (p_Src, p_Dst) => {
 	const result = /\.jsm?$/.test(p_Src);
 	// if it is such a file, try to minify it
 	if (result) {
+		const fileName = path.basename(p_Dst);
+
 		// minify javascript files, assume modules and create a source map
-		const minResult = minifier(fs.readFileSync(p_Src, 'utf8'), { mangle: { keepClassName: true } }, {
-			sourceType: 'module',
-			sourceMaps: true,
+		const minResult = minifier(fs.readFileSync(p_Src, 'utf8'), {
+			mangle: true,
+			module: true,
+			sourceMap: {
+				filename: fileName,
+				url: `${fileName}.map`,
+			},
+			keep_classnames: true,
 		});
 
-		const fileName = path.basename(p_Dst);
-		// for some reason babel doesn't add the source map line, so do it here manually
-		fs.outputFileSync(p_Dst, `${minResult.code}\n//# sourceMappingURL=${fileName}.map`);
-		// for some reason babel doesn't do this, even if I set the appropriate options so set the source here manually
-		minResult.map.sources[0] = fileName;
-		// write the map file
-		fs.outputFileSync(`${p_Dst}.map`, JSON.stringify(minResult.map));
+		fs.outputFileSync(p_Dst, minResult.code);
+		fs.outputFileSync(`${p_Dst}.map`, minResult.map);
+		// const minResult = minifier(fs.readFileSync(p_Src, 'utf8'), { mangle: { keepClassName: true } }, {
+		// 	sourceType: 'module',
+		// 	sourceMaps: true,
+		// });
+
+		// // for some reason babel doesn't add the source map line, so do it here manually
+		// fs.outputFileSync(p_Dst, `${minResult.code}\n//# sourceMappingURL=${fileName}.map`);
+		// // for some reason babel doesn't do this, even if I set the appropriate options so set the source here manually
+		// minResult.map.sources[0] = fileName;
+		// // write the map file
+		// fs.outputFileSync(`${p_Dst}.map`, JSON.stringify(minResult.map));
 	}
 
 	// return false if we minified the file (and thus it was already copied to the proper location) or true when the file still needs to be copied

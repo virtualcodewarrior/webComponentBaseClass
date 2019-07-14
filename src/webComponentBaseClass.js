@@ -7,12 +7,9 @@ import { createQuickAccess, dashesToCamelCase, camelCaseToDashes } from './tools
  */
 function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
 	// retrieve the correct template from our map of previously stored templates
-	const templateInstance = window.webComponentTemplates.get(p_ComponentTemplate);
-	// if we are using the shadyCSS polyfill, we must initialize that now
-	if (window.ShadyCSS) {
-		window.ShadyCSS.prepareTemplate(templateInstance, p_ComponentTemplate);
-		window.ShadyCSS.styleElement(p_ComponentInstance);
-	}
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = p_ComponentTemplate.trim();
+	const templateInstance = tempDiv.firstChild;
 
 	// create the shadow DOM root here
 	const shadowRoot = p_ComponentInstance.attachShadow({ mode: 'open' });

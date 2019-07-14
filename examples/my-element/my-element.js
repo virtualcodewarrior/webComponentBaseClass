@@ -1,4 +1,5 @@
 import { webComponentBaseClass } from '../../dist/webComponentBaseClass.js';
+// import { webComponentBaseClass } from '../../src/webComponentBaseClass.js';
 
 const componentName = 'my-element';
 window.customElements.define(componentName, class extends webComponentBaseClass {
@@ -41,5 +42,46 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 	// change observer implementation example for a property
 	_myChangeHandler(p_NewValue, p_OldValue) {
 		this.$.output.textContent += `The component property 'propertyName' for web component ${this.constructor.is}, was changed from ${p_OldValue} to ${p_NewValue}\n`;
+	}
+
+	static get template() {
+		return `
+			<template>
+				<style>
+					/* put you styling here */
+					.exampleElement {
+						position: relative;
+						display: flex;
+						flex-direction: column;
+						margin: 1em;
+					}
+			
+					.exampleElement span {
+						box-sizing: border-box;
+						display: block;
+						position: relative;
+						width: 100%;
+						height: 20px;
+					}
+			
+					#output {
+						box-sizing: border-box;
+						width: 100%;
+						height: 300px;
+						overflow: auto;
+						box-shadow: inset 0 0 6px;
+						padding: 1em;
+					}
+				</style>
+				<!-- The content of the template goes here -->
+				<div class="exampleElement">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<input id="exampleInput">
+				<pre id="output"></pre>
+			</template>`;
 	}
 });
