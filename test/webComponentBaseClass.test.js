@@ -4,132 +4,130 @@ describe('creates proper web components', () => {
 	const container = document.createElement('div');
 	const elementContainer = document.createElement('div');
 	container.appendChild(elementContainer);
-	const head = document.querySelector('head');
 	let element = null;
 	let attributeElements = [];
 	const externalObserver = jasmine.createSpy('externalObserver'); /*eslint-disable-line*/
-	beforeAll((done) => {
-		const link = document.createElement('link');
-		link.rel = 'import';
-		link.href = './base/test/resources/testTemplate.html';
-		link.onload = () => {
-			const customElementName = 'test-element';
-			window.customElements.define(customElementName, class extends webComponentBaseClass {
-				static get is() { return customElementName; }
-				constructor() { super(); }
-				static get properties() {
-					return {
-						string: {
-							type: String,
-						},
-						number: {
-							type: Number,
-						},
-						boolean: {
-							type: Boolean,
-						},
-						object: {
-							type: Object,
-						},
-						array: {
-							type: Array,
-						},
-						stringDefault: {
-							type: String,
-							value: 'default',
-						},
-						numberDefault: {
-							type: Number,
-							value: 10,
-						},
-						booleanDefault: {
-							type: Boolean,
-							value: true,
-						},
-						objectDefault: {
-							type: Object,
-							value: { content: 5 },
-						},
-						arrayDefault: {
-							type: Array,
-							value: [0, 1, 2, 3],
-						},
-						stringReflect: {
-							type: String,
-							reflectToAttribute: true,
-						},
-						numberReflect: {
-							type: Number,
-							reflectToAttribute: true,
-						},
-						booleanReflect: {
-							type: Boolean,
-							reflectToAttribute: true,
-						},
-						objectReflect: {
-							type: Object,
-							reflectToAttribute: true,
-						},
-						arrayReflect: {
-							type: Array,
-							reflectToAttribute: true,
-						},
-						stringReflectDefault: {
-							type: String,
-							reflectToAttribute: true,
-							value: 'reflect default',
-						},
-						numberReflectDefault: {
-							type: Number,
-							reflectToAttribute: true,
-							value: 11,
-						},
-						booleanReflectDefault: {
-							type: Boolean,
-							reflectToAttribute: true,
-							value: true,
-						},
-						objectReflectDefault: {
-							type: Object,
-							reflectToAttribute: true,
-							value: { content: 6 },
-						},
-						arrayReflectDefault: {
-							type: Array,
-							reflectToAttribute: true,
-							value: [7, 8, 9, 0],
-						},
-						stringObserved: {
-							type: String,
-							observer: '_stringObserver',
-						},
-						numberObserved: {
-							type: Number,
-							observer: '_numberObserver',
-						},
-						booleanObserved: {
-							type: Boolean,
-							observer: '_anyObserver',
-						},
-						objectObserved: {
-							type: Object,
-							observer: '_anyObserver',
-						},
-						arrayObserved: {
-							type: Array,
-							observer: externalObserver,
-						},
-					};
-				}
-				_stringObserver() {} /* eslint-disable-line*/
-				_numberObserver() {} /* eslint-disable-line*/
-				_anyObserver() {} /* eslint-disable-line*/
-			});
-			done();
-		};
+	beforeAll(() => {
+		const customElementName = 'test-element';
+		window.customElements.define(customElementName, class extends webComponentBaseClass {
+			static get is() { return customElementName; }
+			static get template() {
+				return `<template id="test-element">
+					<div class="test" id="example-input"></div>
+					<pre class="test" id="output"></pre>
+					</template>`;
+			}
+			constructor() { super(); }
+			static get properties() {
+				return {
+					string: {
+						type: String,
+					},
+					number: {
+						type: Number,
+					},
+					boolean: {
+						type: Boolean,
+					},
+					object: {
+						type: Object,
+					},
+					array: {
+						type: Array,
+					},
+					stringDefault: {
+						type: String,
+						value: 'default',
+					},
+					numberDefault: {
+						type: Number,
+						value: 10,
+					},
+					booleanDefault: {
+						type: Boolean,
+						value: true,
+					},
+					objectDefault: {
+						type: Object,
+						value: { content: 5 },
+					},
+					arrayDefault: {
+						type: Array,
+						value: [0, 1, 2, 3],
+					},
+					stringReflect: {
+						type: String,
+						reflectToAttribute: true,
+					},
+					numberReflect: {
+						type: Number,
+						reflectToAttribute: true,
+					},
+					booleanReflect: {
+						type: Boolean,
+						reflectToAttribute: true,
+					},
+					objectReflect: {
+						type: Object,
+						reflectToAttribute: true,
+					},
+					arrayReflect: {
+						type: Array,
+						reflectToAttribute: true,
+					},
+					stringReflectDefault: {
+						type: String,
+						reflectToAttribute: true,
+						value: 'reflect default',
+					},
+					numberReflectDefault: {
+						type: Number,
+						reflectToAttribute: true,
+						value: 11,
+					},
+					booleanReflectDefault: {
+						type: Boolean,
+						reflectToAttribute: true,
+						value: true,
+					},
+					objectReflectDefault: {
+						type: Object,
+						reflectToAttribute: true,
+						value: { content: 6 },
+					},
+					arrayReflectDefault: {
+						type: Array,
+						reflectToAttribute: true,
+						value: [7, 8, 9, 0],
+					},
+					stringObserved: {
+						type: String,
+						observer: '_stringObserver',
+					},
+					numberObserved: {
+						type: Number,
+						observer: '_numberObserver',
+					},
+					booleanObserved: {
+						type: Boolean,
+						observer: '_anyObserver',
+					},
+					objectObserved: {
+						type: Object,
+						observer: '_anyObserver',
+					},
+					arrayObserved: {
+						type: Array,
+						observer: externalObserver,
+					},
+				};
+			}
+			_stringObserver() {} /* eslint-disable-line*/
+			_numberObserver() {} /* eslint-disable-line*/
+			_anyObserver() {} /* eslint-disable-line*/
+		});
 
 		document.body.appendChild(container);
-		head.appendChild(link);
 	});
 
 	afterAll(() => {
