@@ -89,29 +89,49 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 	// change observer implementation example for a property
 	_myChangeHandler(p_NewValue, p_OldValue) {
 	}
+	
+	// NEW in V1:  template to use with this web component
+	static get template() {
+		return `
+			<template>
+				<style>
+					/* put you styling here */
+					.exampleElement {
+						position: relative;
+						display: flex;
+						flex-direction: column;
+						margin: 1em;
+					}
+			
+					.exampleElement span {
+						box-sizing: border-box;
+						display: block;
+						position: relative;
+						width: 100%;
+						height: 20px;
+					}
+			
+					#output {
+						box-sizing: border-box;
+						width: 100%;
+						height: 300px;
+						overflow: auto;
+						box-shadow: inset 0 0 6px;
+						padding: 1em;
+					}
+				</style>
+				<!-- The content of the template goes here -->
+				<div class="exampleElement">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<input id="exampleInput">
+				<pre id="output"></pre>
+			</template>`;
+	}
 });
-```
-
-The template definition for the web component should be constructed like this:
-```
-<!DOCTYPE html>
-<div>
-	<template id="my-element">
-		<!-- The id must match the componentName as specified in the javascript file -->
-		<style>
-			/* put you styling here */
-		</style>
-		<!-- The content of the template goes here -->
-	</template>
-	<script>
-		(function storeTemplate() {
-			const template = document.currentScript.parentNode.querySelector('template');
-			window.webComponentTemplates = window.webComponentTemplates || new Map();
-			window.webComponentTemplates.set(template.getAttribute('id'), template);
-		})();
-	</script>
-	<script type="module" src="./my-element.js"></script>
-</div>
 ```
 
 This library has examples provided which also can be used for creating your own web components.
@@ -161,7 +181,7 @@ In the code you can use this to directly access those elements without having to
 	...
 ```
 
-If you remove elements with an id or add new elements with an id through code, you should call refreshQuickAccess to recreate the object.
+If you remove elements with an id or add new elements with an id through code, you should call *refreshQuickAccess* to recreate the object.
 
 ### $$ function
 The $$(selector) function is a shorthand function for this.shadowRoot.querySelector(selector). The query is limited to the shadow DOM.
@@ -212,3 +232,4 @@ myElement.onDetached = () => {
 document.body.appendChild(myElement);
 
 ```
+If you assign the onAttached function after the component was already attached, the callback will be called immediately.
