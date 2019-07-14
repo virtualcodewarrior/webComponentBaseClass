@@ -22,7 +22,7 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 				type: String, // (required) the type of the property, one of Array, Boolean, Number, Object, String
 				value: 'value', // (optional) default value for the property
 				reflectToAttribute: true, // (optional) indicate if you want the component attribute to always reflect the current property value
-				observer: changeHandlerKey, // (optional) the name or symbol of a function in the class to be called when the value of the property is changed
+				observer: changeHandlerKey, // (optional) the name or symbol of a function or a function object in the class to be called when the value of the property is changed
 			},
 			// add as many properties as you need
 		};
