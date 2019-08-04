@@ -92,15 +92,15 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 	}
 
 	// string representation of the template to use with this web component
-	// note that the whole content should be wrapped within a template element
+	// note that providing the template element is optional and that if the template wrapper is not provided
+	// the whole content will be wrapped within a template element
 	static get template() {
 		return `
-			<template>
-				<style>
-					/* put you styling here */
-				</style>
-				<!-- The content of the template goes here -->
-			</template>`;
+            <style>
+                /* put you styling here */
+            </style>
+            <!-- The content of the template goes here -->
+        `;
 	}
 });
 ```

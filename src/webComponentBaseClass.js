@@ -8,10 +8,13 @@ const propertiesKey = Symbol('properties');
  * @param {string} p_ComponentTemplate The id of the web component template
  */
 function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
-	// retrieve the correct template from our map of previously stored templates
 	const tempDiv = document.createElement('div');
 	tempDiv.innerHTML = p_ComponentTemplate.trim();
-	const templateInstance = tempDiv.firstChild;
+	let templateInstance = tempDiv.firstChild;
+	if (!(templateInstance instanceof HTMLTemplateElement)) {
+		templateInstance = document.createElement('template');
+		templateInstance.innerHTML = tempDiv.innerHTML;
+	}
 
 	// create the shadow DOM root here
 	const shadowRoot = p_ComponentInstance.attachShadow({ mode: 'open' });
