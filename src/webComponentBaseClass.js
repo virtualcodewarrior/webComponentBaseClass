@@ -133,7 +133,6 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 				}
 			}
 
-			/* if (originalValue === null)  { */
 			if (p_ComponentInstance.hasAttribute(attributeName)) {
 				userInitialized = p_ComponentInstance.getAttribute(attributeName);
 			}
@@ -178,7 +177,6 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 					}
 				}
 			}
-			// }
 		});
 	}
 }

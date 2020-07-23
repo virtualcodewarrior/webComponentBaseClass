@@ -1,5 +1,5 @@
 import { webComponentBaseClass } from '../../dist/webComponentBaseClass.js';
-//import { webComponentBaseClass } from '../../src/webComponentBaseClass.js';
+// import { webComponentBaseClass } from '../../src/webComponentBaseClass.js';
 
 const changeHandlerKey = Symbol('changeHandler');
 const componentName = 'my-element';
@@ -12,7 +12,7 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 		// change observer implementation example for a property
 		this[changeHandlerKey] = (p_NewValue, p_OldValue) => {
 			this.$.output.textContent += `The component property 'propertyName' for web component ${this.constructor.is}, was changed from ${p_OldValue} to ${p_NewValue}\n`;
-		}
+		};
 	}
 
 	// here we add some properties to this web component
