@@ -2,21 +2,21 @@
 // Karma configuration
 // Generated on Wed Jun 27 2018 18:23:21 GMT-0400 (EDT)
 
-const runSettings = process.argv.reduce((p_Previous, p_Arg, p_Index) => {
-	if (p_Index > 3) {
-		const parts = p_Arg.split('=');
+const runSettings = process.argv.reduce((previous, arg, index) => {
+	if (index > 3) {
+		const parts = arg.split('=');
 		if (parts.length === 1) {
-			p_Previous[parts[0]] = true;
+			previous[parts[0]] = true;
 		} else {
 			const subParts = parts[1].split(',').map((subPart) => subPart.trim());
-			p_Previous[parts[0]] = (subParts.length > 1) ? subParts : subParts[0];
-			if (/^false$|^true$/i.test(p_Previous[parts[0]])) {
-				p_Previous[parts[0]] = p_Previous[parts[0]] !== 'false';
+			previous[parts[0]] = (subParts.length > 1) ? subParts : subParts[0];
+			if (/^false$|^true$/i.test(previous[parts[0]])) {
+				previous[parts[0]] = previous[parts[0]] !== 'false';
 			}
 		}
 	}
 
-	return p_Previous;
+	return previous;
 }, {});
 
 const preprocessors = {};

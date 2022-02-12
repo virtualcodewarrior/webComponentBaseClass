@@ -10,8 +10,8 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 		// extra required initialization goes here ...
 
 		// change observer implementation example for a property
-		this[changeHandlerKey] = (p_NewValue, p_OldValue) => {
-			this.$.output.textContent += `The component property 'propertyName' for web component ${this.constructor.is}, was changed from ${p_OldValue} to ${p_NewValue}\n`;
+		this[changeHandlerKey] = (newValue, oldValue) => {
+			this.$.output.textContent += `The component property 'propertyName' for web component ${this.constructor.is}, was changed from ${oldValue} to ${newValue}\n`;
 		};
 	}
 
@@ -37,7 +37,7 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 		this.$.output.textContent += `web component ${this.constructor.is} was attached to the DOM\n`;
 
 		this.$$('.exampleElement').style.backgroundColor = 'red';
-		this.$$$('.exampleElement span').forEach((p_Element, p_Index) => { p_Element.style.backgroundColor = (p_Index % 2) ? 'green' : 'blue'; });
+		this.$$$('.exampleElement span').forEach((element, index) => { element.style.backgroundColor = (index % 2) ? 'green' : 'blue'; });
 	}
 
 	// optional callback function that will be called after this instance of the web component has been removed from the DOM

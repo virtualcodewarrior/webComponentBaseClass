@@ -132,7 +132,7 @@ describe('creates proper web components', () => {
 
 	afterAll(() => {
 		document.body.removeChild(container);
-		Array.from(document.querySelectorAll('link[rel="import"]')).forEach((p_Element) => p_Element.parentNode.removeChild(p_Element));
+		Array.from(document.querySelectorAll('link[rel="import"]')).forEach((testElement) => testElement.parentNode.removeChild(testElement));
 	});
 
 	beforeEach((done) => {

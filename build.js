@@ -1,8 +1,8 @@
 /* eslint-env node */
 /* eslint { no-console: off } */
-const fs = require('fs-extra');
-const minify = require('terser').minify;
-const path = require('path');
+import fs from 'fs-extra';
+import { minify } from 'terser';
+import path from 'path';
 
 const buildSrcPath = path.resolve('./');
 const targetPath = path.resolve('./dist');
@@ -14,15 +14,15 @@ if (fs.existsSync(targetPath)) {
 fs.ensureDirSync(targetPath);
 
 // minification function
-const doMinify = (p_Src, p_Dst) => {
+const doMinify = async(src, dst) => {
 	// test if the file is a js or jsm file
-	const result = /\.jsm?$/.test(p_Src);
+	const result = /\.jsm?$/.test(src);
 	// if it is such a file, try to minify it
 	if (result) {
-		const fileName = path.basename(p_Dst);
+		const fileName = path.basename(dst);
 
 		// minify javascript files, assume modules and create a source map
-		const minResult = minify(fs.readFileSync(p_Src, 'utf8'), {
+		const minResult = await minify(fs.readFileSync(src, 'utf8'), {
 			mangle: true,
 			module: true,
 			sourceMap: {
@@ -33,10 +33,10 @@ const doMinify = (p_Src, p_Dst) => {
 			keep_classnames: true,
 		});
 
-		fs.outputFileSync(p_Dst, minResult.code);
+		fs.outputFileSync(dst, minResult.code);
 		const map = JSON.parse(minResult.map);
 		map.sources[0] = `../src/${fileName}`;
-		fs.outputFileSync(`${p_Dst}.map`, JSON.stringify(map));
+		fs.outputFileSync(`${dst}.map`, JSON.stringify(map));
 	}
 
 	// return false if we minified the file (and thus it was already copied to the proper location) or true when the file still needs to be copied

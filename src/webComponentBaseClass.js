@@ -4,12 +4,12 @@ const propertiesKey = Symbol('properties');
 
 /**
  * Create the shadow DOM and attach it to the given web component instance
- * @param {HTMLElement} p_ComponentInstance The web component instance to which we are attaching the shadow DOM
- * @param {string} p_ComponentTemplate The id of the web component template
+ * @param {HTMLElement} componentInstance The web component instance to which we are attaching the shadow DOM
+ * @param {string} componentTemplate The id of the web component template
  */
-function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
+function createShadowDOM(componentInstance, componentTemplate) {
 	const tempDiv = document.createElement('div');
-	tempDiv.innerHTML = p_ComponentTemplate.trim();
+	tempDiv.innerHTML = componentTemplate.trim();
 	let templateInstance = tempDiv.firstChild;
 	if (!(templateInstance instanceof HTMLTemplateElement)) {
 		templateInstance = document.createElement('template');
@@ -17,7 +17,7 @@ function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
 	}
 
 	// create the shadow DOM root here
-	const shadowRoot = p_ComponentInstance.attachShadow({ mode: 'open' });
+	const shadowRoot = componentInstance.attachShadow({ mode: 'open' });
 	shadowRoot.appendChild(templateInstance.content.cloneNode(true));
 }
 
@@ -25,107 +25,107 @@ function createShadowDOM(p_ComponentInstance, p_ComponentTemplate) {
  * Create quick access members for this component. This function will add the possibility to access child elements that have an id, through
  * the $ member, it also allows to do a querySelector on the shadow dom through the $$ function and it will add querySelectorAll through the $$$ function
  * The $$$ function will return the child members as an array and not as an node list
- * @param {webComponentBaseClass} p_ComponentInstance The component for which we are creating the quick access members
+ * @param {webComponentBaseClass} componentInstance The component for which we are creating the quick access members
  */
-function ensureQuickAccess(p_ComponentInstance) {
-	if (!p_ComponentInstance.$) { // make sure we didn't do this already
-		p_ComponentInstance.$ = createQuickAccess(p_ComponentInstance.shadowRoot, 'id');
-		p_ComponentInstance.$$ = (p_Selector) => p_ComponentInstance.shadowRoot.querySelector(p_Selector);
-		p_ComponentInstance.$$$ = (p_Selector) => Array.from(p_ComponentInstance.shadowRoot.querySelectorAll(p_Selector));
+function ensureQuickAccess(componentInstance) {
+	if (!componentInstance.$) { // make sure we didn't do this already
+		componentInstance.$ = createQuickAccess(componentInstance.shadowRoot, 'id');
+		componentInstance.$$ = (selector) => componentInstance.shadowRoot.querySelector(selector);
+		componentInstance.$$$ = (selector) => Array.from(componentInstance.shadowRoot.querySelectorAll(selector));
 	}
 }
 
 /**
  * Initialize the web component after it has been added to the DOM
- * @param {webComponentBaseClass} p_ComponentInstance The component instance we are initializing
- * @param {object} p_Properties The object that contains any web component specific properties
+ * @param {webComponentBaseClass} componentInstance The component instance we are initializing
+ * @param {object} properties The object that contains any web component specific properties
  */
-function handleConnected(p_ComponentInstance, p_Properties) {
-	ensureQuickAccess(p_ComponentInstance);
-	if (p_Properties) {
+function handleConnected(componentInstance, properties) {
+	ensureQuickAccess(componentInstance);
+	if (properties) {
 		const originalValues = {};
 
-		Object.keys(p_Properties).forEach((p_PropertyKey) => {
-			const property = p_Properties[p_PropertyKey];
-			const attributeName = camelCaseToDashes(p_PropertyKey);
+		Object.keys(properties).forEach((propertyKey) => {
+			const property = properties[propertyKey];
+			const attributeName = camelCaseToDashes(propertyKey);
 
-			originalValues[p_PropertyKey] = p_ComponentInstance[p_PropertyKey];
+			originalValues[propertyKey] = componentInstance[propertyKey];
 
-			Object.defineProperty(p_ComponentInstance, p_PropertyKey, {
-				get() { return p_ComponentInstance[propertiesKey][p_PropertyKey]; },
-				set(p_Value) {
-					const oldValue = p_ComponentInstance[propertiesKey][p_PropertyKey];
-					let toAttribute = (p_ConvertValue) => p_ConvertValue.toString();
+			Object.defineProperty(componentInstance, propertyKey, {
+				get() { return componentInstance[propertiesKey][propertyKey]; },
+				set(value) {
+					const oldValue = componentInstance[propertiesKey][propertyKey];
+					let toAttribute = (convertValue) => convertValue.toString();
 					switch (property.type) {
-						case Array: p_ComponentInstance[propertiesKey][p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : Array.isArray(p_Value) ? p_Value : []; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case Boolean: p_ComponentInstance[propertiesKey][p_PropertyKey] = p_Value && p_Value !== 'false'; toAttribute = () => ''; break;
-						case Number: p_ComponentInstance[propertiesKey][p_PropertyKey] = ((p_Value === undefined) ? 0 : Number(p_Value)) || 0; break;
-						case Object: p_ComponentInstance[propertiesKey][p_PropertyKey] = (typeof p_Value === 'string') ? JSON.parse(p_Value) : (typeof p_Value === 'object') ? p_Value : {}; toAttribute = (p_ConvertValue) => JSON.stringify(p_ConvertValue); break;
-						case String: p_ComponentInstance[propertiesKey][p_PropertyKey] = ((p_Value === undefined || p_Value === null) ? '' : String(p_Value)) || ''; break;
+						case Array: componentInstance[propertiesKey][propertyKey] = (typeof value === 'string') ? JSON.parse(value) : Array.isArray(value) ? value : []; toAttribute = (convertValue) => JSON.stringify(convertValue); break;
+						case Boolean: componentInstance[propertiesKey][propertyKey] = value && value !== 'false'; toAttribute = () => ''; break;
+						case Number: componentInstance[propertiesKey][propertyKey] = ((value === undefined) ? 0 : Number(value)) || 0; break;
+						case Object: componentInstance[propertiesKey][propertyKey] = (typeof value === 'string') ? JSON.parse(value) : (typeof value === 'object') ? value : {}; toAttribute = (convertValue) => JSON.stringify(convertValue); break;
+						case String: componentInstance[propertiesKey][propertyKey] = ((value === undefined || value === null) ? '' : String(value)) || ''; break;
 					}
 					if (property.observer) {
 						if (typeof property.observer === 'function') {
-							if (oldValue !== p_ComponentInstance[propertiesKey][p_PropertyKey]) {
-								property.observer(p_ComponentInstance, p_ComponentInstance[propertiesKey][p_PropertyKey], oldValue);
+							if (oldValue !== componentInstance[propertiesKey][propertyKey]) {
+								property.observer(componentInstance, componentInstance[propertiesKey][propertyKey], oldValue);
 							}
-						} else if (p_ComponentInstance[property.observer]) {
-							if (oldValue !== p_ComponentInstance[propertiesKey][p_PropertyKey]) {
-								p_ComponentInstance[property.observer](p_ComponentInstance[propertiesKey][p_PropertyKey], oldValue);
+						} else if (componentInstance[property.observer]) {
+							if (oldValue !== componentInstance[propertiesKey][propertyKey]) {
+								componentInstance[property.observer](componentInstance[propertiesKey][propertyKey], oldValue);
 							}
 						} else {
-							console.warn(`The observer with the name: '${property.observer}' was not found inside the class for web component ${p_ComponentInstance.constructor.is}. Make sure that you added a public function with the name '${property.observer}' to the class.`);
+							console.warn(`The observer with the name: '${property.observer}' was not found inside the class for web component ${componentInstance.constructor.is}. Make sure that you added a public function with the name '${property.observer}' to the class.`);
 						}
 					}
 					if (property.reflectToAttribute) {
-						if (p_ComponentInstance[propertiesKey][p_PropertyKey]) {
-							p_ComponentInstance.setAttribute(attributeName, toAttribute(p_ComponentInstance[propertiesKey][p_PropertyKey]));
+						if (componentInstance[propertiesKey][propertyKey]) {
+							componentInstance.setAttribute(attributeName, toAttribute(componentInstance[propertiesKey][propertyKey]));
 						} else {
-							p_ComponentInstance.removeAttribute(attributeName);
+							componentInstance.removeAttribute(attributeName);
 						}
 					}
 				},
 			});
 		});
 
-		Object.keys(p_Properties).forEach((p_PropertyKey) => {
-			const property = p_Properties[p_PropertyKey];
-			const attributeName = camelCaseToDashes(p_PropertyKey);
+		Object.keys(properties).forEach((propertyKey) => {
+			const property = properties[propertyKey];
+			const attributeName = camelCaseToDashes(propertyKey);
 			let userInitialized;
-			let originalValue = originalValues[p_PropertyKey] || null;
+			let originalValue = originalValues[propertyKey] || null;
 
 			if (originalValue) {
 				switch (property.type) {
 					case Array:
 						if (Array.isArray(originalValue)) {
-							p_ComponentInstance[p_PropertyKey] = originalValue;
+							componentInstance[propertyKey] = originalValue;
 						} else {
 							originalValue = null;
 						}
 						break;
 					case Boolean:
 						if (typeof originalValue === 'boolean') {
-							p_ComponentInstance[p_PropertyKey] = originalValue;
+							componentInstance[propertyKey] = originalValue;
 						} else {
 							originalValue = null;
 						}
 						break;
 					case Number:
 						if (typeof originalValue === 'number') {
-							p_ComponentInstance[p_PropertyKey] = originalValue;
+							componentInstance[propertyKey] = originalValue;
 						} else {
 							originalValue = null;
 						}
 						break;
 					case Object:
 						if (typeof originalValue === 'object') {
-							p_ComponentInstance[p_PropertyKey] = originalValue;
+							componentInstance[propertyKey] = originalValue;
 						} else {
 							originalValue = null;
 						}
 						break;
 					case String:
 						if (typeof originalValue === 'string') {
-							p_ComponentInstance[p_PropertyKey] = originalValue;
+							componentInstance[propertyKey] = originalValue;
 						} else {
 							originalValue = null;
 						}
@@ -133,46 +133,46 @@ function handleConnected(p_ComponentInstance, p_Properties) {
 				}
 			}
 
-			if (p_ComponentInstance.hasAttribute(attributeName)) {
-				userInitialized = p_ComponentInstance.getAttribute(attributeName);
+			if (componentInstance.hasAttribute(attributeName)) {
+				userInitialized = componentInstance.getAttribute(attributeName);
 			}
 
-			if (property.reflectToAttribute || p_ComponentInstance[p_PropertyKey] === undefined) {
+			if (property.reflectToAttribute || componentInstance[propertyKey] === undefined) {
 				// use the user specified value if it was specified
 				if (userInitialized !== undefined) {
 					switch (property.type) {
 						case Array:
-							p_ComponentInstance[p_PropertyKey] = JSON.parse(userInitialized);
+							componentInstance[propertyKey] = JSON.parse(userInitialized);
 							break;
 						case Boolean:
-							p_ComponentInstance[p_PropertyKey] = userInitialized !== 'false';
+							componentInstance[propertyKey] = userInitialized !== 'false';
 							break;
 						case Number:
-							p_ComponentInstance[p_PropertyKey] = Number(userInitialized);
+							componentInstance[propertyKey] = Number(userInitialized);
 							break;
 						case Object:
-							p_ComponentInstance[p_PropertyKey] = JSON.parse(userInitialized);
+							componentInstance[propertyKey] = JSON.parse(userInitialized);
 							break;
 						case String:
-							p_ComponentInstance[p_PropertyKey] = String(userInitialized);
+							componentInstance[propertyKey] = String(userInitialized);
 							break;
 					}
 				} else { // use the default value
 					switch (property.type) {
 						case Array:
-							p_ComponentInstance[p_PropertyKey] = property.value || [];
+							componentInstance[propertyKey] = property.value || [];
 							break;
 						case Boolean:
-							p_ComponentInstance[p_PropertyKey] = property.value || false;
+							componentInstance[propertyKey] = property.value || false;
 							break;
 						case Number:
-							p_ComponentInstance[p_PropertyKey] = property.value || 0;
+							componentInstance[propertyKey] = property.value || 0;
 							break;
 						case Object:
-							p_ComponentInstance[p_PropertyKey] = property.value || {};
+							componentInstance[propertyKey] = property.value || {};
 							break;
 						case String:
-							p_ComponentInstance[p_PropertyKey] = property.value || '';
+							componentInstance[propertyKey] = property.value || '';
 							break;
 					}
 				}
@@ -204,7 +204,7 @@ export class webComponentBaseClass extends HTMLElement {
 	 * Get an array containing all attributes that have an observer attached
 	 * @returns {array} Array containing all attributes that have an observer
 	 */
-	static get observedAttributes() { return (this.properties) ? Object.keys(this.properties).map((p_Name) => camelCaseToDashes(p_Name)) : []; }
+	static get observedAttributes() { return (this.properties) ? Object.keys(this.properties).map((name) => camelCaseToDashes(name)) : []; }
 
 	/**
 	 * Constructor for this base class
@@ -238,7 +238,7 @@ export class webComponentBaseClass extends HTMLElement {
 		// this will make sure that onAttached gets called immediately if the component was already attached
 		Object.defineProperty(this, 'onAttached', {
 			get() { return undefined; },
-			set(p_Callback) { p_Callback(this); },
+			set(callback) { callback(this); },
 		});
 	}
 
@@ -255,53 +255,53 @@ export class webComponentBaseClass extends HTMLElement {
 			this.onDetached(this);
 		}
 		// remove any auto event handler that was added
-		this.eventHandlers.forEach((p_Handler) => { p_Handler.element.removeEventListener(p_Handler.event, p_Handler.handler); });
+		this.eventHandlers.forEach((handler) => { handler.element.removeEventListener(handler.event, handler.handler); });
 	}
 
 	/**
 	 * Called by the system if an attribute value is changed
-	 * @param {string} p_Attribute The name of the attribute that is changed
-	 * @param {*} p_OldValue The old value for the attribute
-	 * @param {*} p_NewValue The new value for the attribute
+	 * @param {string} attribute The name of the attribute that is changed
+	 * @param {*} oldValue The old value for the attribute
+	 * @param {*} newValue The new value for the attribute
 	 */
-	attributeChangedCallback(p_Attribute, p_OldValue, p_NewValue) {
-		const propertyName = dashesToCamelCase(p_Attribute);
+	attributeChangedCallback(attribute, oldValue, newValue) {
+		const propertyName = dashesToCamelCase(attribute);
 		ensureQuickAccess(this);
 		// boolean are handled differently because the absence of the value also means false and the presence of the value also means true
 		if (this.constructor.properties[propertyName] && this.constructor.properties[propertyName].type === Boolean) {
-			p_OldValue = !!(p_OldValue === '' || (p_OldValue && p_OldValue !== 'false'));
-			p_NewValue = !!(p_NewValue === '' || (p_NewValue && p_NewValue !== 'false'));
+			oldValue = !!(oldValue === '' || (oldValue && oldValue !== 'false'));
+			newValue = !!(newValue === '' || (newValue && newValue !== 'false'));
 		}
 		// we set our variable and the setter will handle the rest
-		if (p_OldValue !== p_NewValue) {
-			this[propertyName] = p_NewValue;
+		if (oldValue !== newValue) {
+			this[propertyName] = newValue;
 		}
 	}
 
 	/**
 	 * Attach an event handler to the given element. This function will automatically clean all event handlers when the web component gets removed from the DOM
-	 * @param {HTMLElement} p_Element The element to which we are attaching the event handler
-	 * @param {string} p_EventName The name of the event (e.g. click, mouse down etc)
-	 * @param {function} p_Callback The handler function to be called for the event
+	 * @param {HTMLElement} element The element to which we are attaching the event handler
+	 * @param {string} eventName The name of the event (e.g. click, mouse down etc)
+	 * @param {function} callback The handler function to be called for the event
 	 */
-	addAutoEventListener(p_Element, p_EventName, p_Callback) {
-		if (!this.eventHandlers.find((p_Handler) => p_Handler.element === p_Element && p_Handler.event === p_EventName && p_Handler.handler === p_Callback)) {
-			this.eventHandlers.push({ element: p_Element, event: p_EventName, handler: p_Callback });
-			p_Element.addEventListener(p_EventName, p_Callback);
+	addAutoEventListener(element, eventName, callback) {
+		if (!this.eventHandlers.find((handler) => handler.element === element && handler.event === eventName && handler.handler === callback)) {
+			this.eventHandlers.push({ element, event: eventName, handler: callback });
+			element.addEventListener(eventName, callback);
 		}
 	}
 
 	/**
 	 * Remove an event handler that was previously attached by a call to addAutoEventListener
-	 * @param {HTMLElement} p_Element The element from which the event will be removed
-	 * @param {string} p_EventName The name of the event to remove
-	 * @param {function} p_Callback The callback that was previously added for the event
+	 * @param {HTMLElement} element The element from which the event will be removed
+	 * @param {string} eventName The name of the event to remove
+	 * @param {function} callback The callback that was previously added for the event
 	 */
-	removeAutoEventListener(p_Element, p_EventName, p_Callback) {
-		const eventIndex = this.eventHandlers.findIndex((p_Handler) => p_Handler.element === p_Element && p_Handler.event === p_EventName && p_Handler.handler === p_Callback);
+	removeAutoEventListener(element, eventName, callback) {
+		const eventIndex = this.eventHandlers.findIndex((handler) => handler.element === element && handler.event === eventName && handler.handler === callback);
 		if (eventIndex !== -1) {
 			this.eventHandlers.splice(eventIndex, 1);
-			p_Element.removeEventListener(p_EventName, p_Callback);
+			element.removeEventListener(eventName, callback);
 		}
 	}
 
