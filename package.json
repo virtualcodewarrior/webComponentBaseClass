@@ -23,9 +23,11 @@
   "doc": "node ./node_modules/jsdoc/jsdoc.js src -r -d doc",
   "lint": "node ./node_modules/eslint/bin/eslint.js --color -c .eslintrc.cjs \"src/**/*.js\" \"test/**/*.js\"",
   "unittest": "node ./node_modules/karma/bin/karma start karma.conf.cjs --single-run",
+  "unittest-headless": "node ./node_modules/karma/bin/karma start karma.conf.cjs --single-run --browsers FirefoxHeadless,ChromiumHeadless",
   "watch-test": "node ./node_modules/karma/bin/karma start karma.conf.cjs --watch",
   "coverage": "node ./node_modules/karma/bin/karma start karma.conf.cjs coverage --single-run",
   "test": "npm run lint && npm run unittest",
+  "test-headless": "npm run lint && npm run unittest-headless",
   "prepare": "npm run build"
  },
  "files": [

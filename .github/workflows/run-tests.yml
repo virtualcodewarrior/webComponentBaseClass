@@ -27,11 +27,6 @@ jobs:
         with:
           chrome-version: "latest"
 
-      - name: Setup xvfb
-        run: |
-          sudo apt-get install xvfb
-          Xvfb $DISPLAY -screen 0 1024x768x24 > /dev/null 2>&1 &
-
       - name: npm install
         run: npm ci --ignore-scripts
 
@@ -39,7 +34,7 @@ jobs:
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
       - name: Run tests
-        run: npm test
+        run: npm run test-headless
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
