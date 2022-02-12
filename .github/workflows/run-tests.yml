@@ -27,6 +27,11 @@ jobs:
         with:
           chrome-version: "latest"
 
+      - name: Setup xvfb
+        run: |
+          sudo apt-get install xvfb
+          Xvfb $DISPLAY -screen 0 1024x768x24 > /dev/null 2>&1 &
+
       - name: npm install
         run: npm ci --ignore-scripts
 
