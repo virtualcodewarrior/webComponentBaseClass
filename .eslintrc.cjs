@@ -1,7 +1,8 @@
 /* eslint-disable */
 module.exports = {
 	env: {
-		browser: true, // we are targetting browser environments
+		node: true,
+		browser: true, // we are targeting browser environments
 		es6: true, // we use es6
 		jasmine: true, // we use jasmine for testing
 	},
@@ -10,7 +11,7 @@ module.exports = {
 	],
 	parserOptions: {
 		sourceType: 'module',
-		ecmaVersion: 6,
+		ecmaVersion: 2020,
 	},
 	// 'extends': 'eslint:recommended', // don't use any default settings, we will specify all settings explicitely
 	rules: {
@@ -153,7 +154,7 @@ module.exports = {
 		'func-style': 'off',					        //	enforce the consistent use of either function declarations or expressions
 		'id-blacklist': 'off',					        //	disallow specified identifiers
 		'id-length': ['error', { min: 2, exceptions: ['x', 'y', '_', '$'] }],	//	enforce minimum and maximum identifier lengths
-		'id-match': ['error', '(^[A-Za-z_0-9]+$)|(^p_[A-Z]([a-z]+[0-9]*([A-Z][a-z0-9]*)*)$)|(^_?[a-zE]+[0-9]*([A-Z][a-z0-9]*)*$)|NaN'],		    //	require identifiers to match a specified regular expression
+		'id-match': ['error', '(^[A-Za-z_0-9]+$)|(^[A-Z]([a-z]+[0-9]*([A-Z][a-z0-9]*)*)$)|(^_?[a-zE]+[0-9]*([A-Z][a-z0-9]*)*$)|NaN'],		    //	require identifiers to match a specified regular expression
 		indent: ['error', 'tab', { VariableDeclarator: 0, SwitchCase: 1 }], //	autofixable enforce consistent indentation
 		'jsx-quotes': 'off',					        //	autofixable enforce the consistent use of either double or single quotes in JSX attributes
 		'key-spacing': ['error', { beforeColon: false, afterColon: true }],	//	autofixable enforce consistent spacing between keys and values in object literal properties

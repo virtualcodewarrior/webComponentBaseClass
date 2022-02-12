@@ -63,7 +63,7 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 		// extra required initialization goes here ...
     
     	// change observer implementation example for a property
-		this[changeHandlerKey] = (p_NewValue, p_OldValue) => {
+		this[changeHandlerKey] = (newValue, oldValue) => {
         }
 	}
 
@@ -165,7 +165,7 @@ The $$$(selector) function is a shorthand for Array.from(this.shadowRoot.querySe
 This can be used everywhere you want to do querySelectorAll on the shadowDom only and want to get back an array instead of an 'array like' object that is normally returned from querySelectorAll. This means you can use forEach and all the other array functions directly on the result. If no objects matching the selector can be found, an empty array will be returned.
 e.g.
 ```
-this.$$$('button').forEach((p_Button) => { p_Button.disabled = true; }); // disable all our buttons
+this.$$$('button').forEach((button) => { button.disabled = true; }); // disable all our buttons
 ```
 
 ### addAutoEventListener function
