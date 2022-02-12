@@ -14,6 +14,15 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
+      - name: Setup firefox
+        uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: "latest"
+      - name: Setup chrome
+        uses: browser-actions/setup-chrome@latest
+        run: chrome --version
+        with:
+          chrome-version: "latest"
       - name: npm install
         run: npm ci --ignore-scripts
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner and node has been installed"
