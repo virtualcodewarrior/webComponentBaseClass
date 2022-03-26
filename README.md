@@ -17,7 +17,7 @@ The following steps can be used if you want to develop on this library
 ### Installation
 Clone the git repo
 ```bash
-git clone https://github.com/virtualcodewarrior/WebComponentBaseClass.git
+git clone https://github.com/virtualcodewarrior/webComponentBaseClass.git
 ```
 Install dev dependencies
 ```bash
@@ -47,7 +47,7 @@ To run the unit tests in watch mode, run
 npm run watch-test
 ```
 
-### Generate documenttation
+### Generate documentation
 ```bash
 npm run doc
 ```
@@ -224,7 +224,7 @@ attached() {
 that you can clean up lambda callbacks that are declared inline
 
 ### removeAutoEventListener function
-`removeAutoEventListener(HTMLElement, EventName, CallbackFunction)`. This function allows you to clean up an eventListener previously added using the addAutoEventListener function. Of course if you want to use this function you will have to keep track of the element, event name and callback yourself so you can remove them properly.
+`removeAutoEventListener(HTMLElement, EventName, CallbackFunction)`. This function allows you to clean up an eventListener previously added using the addAutoEventListener function. Of course if you want to use this function you will have to keep track of the element, event name and callback yourself, so you can remove them properly.
 
 ### refreshQuickAccess function
 call this function to rebuild the map of id to elements after you have manually modified the content of the shadow dom by removing or adding elements that have an id attribute.
@@ -253,5 +253,5 @@ If you assign the onAttached function after the component was already attached, 
 There are some breaking changes starting at version 1.1.x compared to 1.0.x versions
 - The base class is now called `WebComponentBaseClass` where it used to be `webComponentBaseClass` note the capital `W` for the class name.
 - The file to import has been renamed to `web-component-base-class.js`
-- You no longer have to create the `static get is() { return 'name-of-my-custom-element' }` function and the `is` member is now an instance member vs a static function in older versions. So replace all occurrences of `this.constructor.is` with `this.is`.
+- You no longer have to create the `static get is() { return 'name-of-my-custom-element' }` function and the `is` member is now an instance member vs a static function in older versions, so replace all occurrences of `this.constructor.is` with `this.is`.
 - This now makes use of private class members, so only upgrade if the browsers you target support that feature
