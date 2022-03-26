@@ -1,4 +1,4 @@
-import { webComponentBaseClass } from '../src/webComponentBaseClass.js';
+import { WebComponentBaseClass } from '../src/web-component-base-class.js';
 
 describe('creates proper web components', () => {
 	const container = document.createElement('div');
@@ -9,7 +9,7 @@ describe('creates proper web components', () => {
 	const externalObserver = jasmine.createSpy('externalObserver'); /*eslint-disable-line*/
 	beforeAll(() => {
 		const customElementName = 'test-element';
-		window.customElements.define(customElementName, class extends webComponentBaseClass {
+		window.customElements.define(customElementName, class extends WebComponentBaseClass {
 			static get is() { return customElementName; }
 			static get template() {
 				return `<template>

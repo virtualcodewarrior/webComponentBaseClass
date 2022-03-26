@@ -1,17 +1,15 @@
-import { webComponentBaseClass } from '../../dist/webComponentBaseClass.js';
-// import { webComponentBaseClass } from '../../src/webComponentBaseClass.js';
+import { WebComponentBaseClass } from '../../dist/web-component-base-class.js';
+// import { WebComponentBaseClass } from '../../src/web-component-base-class.js';
 
-const changeHandlerKey = Symbol('changeHandler');
-const componentName = 'my-element';
-window.customElements.define(componentName, class extends webComponentBaseClass {
-	static get is() { return componentName; }
+class MyElement extends WebComponentBaseClass {
+	#changeHandler;
 	constructor() {
 		super();
 		// extra required initialization goes here ...
 
 		// change observer implementation example for a property
-		this[changeHandlerKey] = (newValue, oldValue) => {
-			this.$.output.textContent += `The component property 'propertyName' for web component ${this.constructor.is}, was changed from ${oldValue} to ${newValue}\n`;
+		this.#changeHandler = (newValue, oldValue) => {
+			this.$.output.textContent += `The component property 'propertyName' for web component ${this.is}, was changed from ${oldValue} to ${newValue}\n`;
 		};
 	}
 
@@ -22,33 +20,36 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 				type: String, // (required) the type of the property, one of Array, Boolean, Number, Object, String
 				value: 'value', // (optional) default value for the property
 				reflectToAttribute: true, // (optional) indicate if you want the component attribute to always reflect the current property value
-				observer: changeHandlerKey, // (optional) the name or symbol of a function or a function object in the class to be called when the value of the property is changed
+				observer: (instance, newValue, oldValue) => instance.#changeHandler(newValue, oldValue), // (optional) the name or symbol of a function or a function object in the class to be called when the value of the property is changed
 			},
 			// add as many properties as you need
 		};
 	}
 
 	// optional callback function that will be called after this instance of the web component
-	// has been added to the DOM
+	// has been added to the DOM, a good place to add event handlers
 	attached() {
 		this.addAutoEventListener(this.$.exampleInput, 'change', () => {
 			this.$.output.textContent += `The input has changed to ${this.$.exampleInput.value}\n`;
+			this.$$$('.exampleElement span').forEach((element, index) => { element.textContent = `${this.$.exampleInput.value} - ${index}`; });
 		});
-		this.$.output.textContent += `web component ${this.constructor.is} was attached to the DOM\n`;
+		this.$.output.textContent += `web component ${this.is} was attached to the DOM\n`;
 
-		this.$$('.exampleElement').style.backgroundColor = 'red';
+		this.$$('.exampleElement').style.border = '1px solid red';
 		this.$$$('.exampleElement span').forEach((element, index) => { element.style.backgroundColor = (index % 2) ? 'green' : 'blue'; });
 	}
 
-	// optional callback function that will be called after this instance of the web component has been removed from the DOM
+	// callback function that will be called after this instance of the web component has been removed from the DOM
+	// a good place to do any additional needed cleanup
 	detached() {
-		console.log(`web component ${this.constructor.is} was removed from the DOM`);
+		console.log(`web component ${this.is} was detached from the DOM`);
 	}
 
+	// the HTML content for this custom element
 	static get template() {
 		return `
 			<style>
-				/* put you styling here */
+				/* put your styling here */
 				.exampleElement {
 					position: relative;
 					display: flex;
@@ -84,4 +85,6 @@ window.customElements.define(componentName, class extends webComponentBaseClass 
 			<pre id="output"></pre>
 		`;
 	}
-});
+}
+// register your class as a custom element
+window.customElements.define('my-element', MyElement);
