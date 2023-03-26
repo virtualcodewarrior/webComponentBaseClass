@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "$(git diff HEAD ORIG_HEAD --name-only --oneline package-lock.json)" | grep package-lock.json && echo -e "\033[1;33mWarning: package-lock.json has changed, you may need to run \033[1;34mnpm install\e[0m" || true

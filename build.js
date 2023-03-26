@@ -43,6 +43,6 @@ const doMinify = async(src, dst) => {
 	return !result;
 };
 
-// use copy sync with a filter that calls minify to do minification at the same time
+// use copy with a filter that calls minify to do minification at the same time
 console.log(`Copy and minify files from src (${buildSrcPath}/src) to target (${targetPath})`);
 fs.copy(`${buildSrcPath}/src`, targetPath, { filter: doMinify, preserveTimestamps: true });

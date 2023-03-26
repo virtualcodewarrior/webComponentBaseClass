@@ -23,7 +23,6 @@ const preprocessors = {};
 const plugins = [
 	'karma-jasmine-html-reporter',
 	'karma-spec-reporter',
-	'karma-jasmine-es6',
 	'karma-jasmine',
 	'karma-chrome-launcher',
 	'karma-firefox-launcher',
@@ -56,7 +55,6 @@ module.exports = function(config) {
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
 		frameworks: [
-			'jasmine-es6',
 			'jasmine',
 		],
 
