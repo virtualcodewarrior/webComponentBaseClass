@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-env node */
 module.exports = {
 	env: {
 		node: true,
@@ -82,7 +82,7 @@ module.exports = {
 		'no-lone-blocks': ['error'],			        //	disallow unnecessary nested blocks
 		'no-loop-func': ['error'],				        //	disallow function declarations and expressions inside loop statements
 		'no-magic-numbers': 'off',						//	disallow magic numbers
-		'no-multi-spaces': ['error'],			        //	auto fixable disallow multiple spaces
+		'no-multi-spaces': 'off',			            //	auto fixable disallow multiple spaces
 		'no-multi-str': ['error'],				        //	disallow multiline strings
 		'no-new-func': ['error'],				        //	disallow new operators with the Function object
 		'no-new-wrappers': ['error'],			        //	disallow new operators with the String, Number, and Boolean objects
