@@ -1,13 +1,18 @@
 import { WebComponentBaseClass } from '../src/web-component-base-class.js';
 
 describe('creates proper web components', () => {
-	const container = document.createElement('div');
-	const elementContainer = document.createElement('div');
-	container.appendChild(elementContainer);
+	/* eslint-disable jasmine/no-describe-variables */
+	let container;
+	let elementContainer;
 	let element = null;
 	let attributeElements = [];
-	const externalObserver = jasmine.createSpy('externalObserver'); /*eslint-disable-line*/
+	let externalObserver;
+	/* eslint-enable jasmine/no-describe-variables */
 	beforeAll(() => {
+		container = document.createElement('div');
+		elementContainer = document.createElement('div');
+		container.appendChild(elementContainer);
+		externalObserver = jasmine.createSpy('externalObserver'); /*eslint-disable-line*/
 		const customElementName = 'test-element';
 		window.customElements.define(customElementName, class extends WebComponentBaseClass {
 			static get is() { return customElementName; }
