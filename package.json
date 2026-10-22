@@ -16,19 +16,22 @@
  "author": {
   "name": "Rodney Draaisma"
  },
+ "engines": {
+  "node": ">=24"
+ },
  "scripts": {
   "server": "node ./node_modules/http-server/bin/http-server -c-1 -p 2211",
   "start": "npm run server",
   "build": "node build.js",
   "doc": "node ./node_modules/jsdoc/jsdoc.js src -r -d doc",
-   "lint": "eslint --color \"src/**/*.js\" \"test/**/*.js\"",
+  "lint": "eslint --color \"src/**/*.js\" \"test/**/*.js\"",
   "unittest": "node ./node_modules/karma/bin/karma start karma.conf.cjs --single-run",
-  "unittest-headless": "node ./node_modules/karma/bin/karma start karma.conf.cjs --single-run --browsers FirefoxHeadless,ChromiumHeadless",
+  "unittest-headless": "node ./node_modules/karma/bin/karma start karma.conf.cjs --single-run --browsers FirefoxHeadless,ChromiumHeadlessNoSandbox",
   "watch-test": "node ./node_modules/karma/bin/karma start karma.conf.cjs --watch",
   "coverage": "node ./node_modules/karma/bin/karma start karma.conf.cjs coverage --single-run",
   "test": "npm run lint && npm run unittest",
   "test-headless": "npm run lint && npm run unittest-headless",
-   "prepare": "npm run build && husky",
+  "prepare": "npm run build && husky",
   "pre-commit": "lint-staged"
  },
  "files": [
@@ -36,31 +39,31 @@
   "dist",
   "examples"
  ],
-  "lint-staged": {
-   "*.{js,cjs,mjs}": [
-    "eslint --color"
-   ]
-  },
+ "lint-staged": {
+  "*.{js,cjs,mjs}": [
+   "eslint --color"
+  ]
+ },
  "repository": {
   "type": "git",
   "url": "https://github.com/virtualcodewarrior/webComponentBaseClass.git"
  },
  "devDependencies": {
-  "eslint": "^10.8.0",
+  "eslint": "^10.13.0",
   "eslint-plugin-jasmine": "^4.2.2",
-  "fs-extra": "^11.4.0",
+  "fs-extra": "^11.4.1",
   "http-server": "^14.1.1",
   "husky": "^9.1.7",
-  "jasmine": "^6.3.0",
+  "jasmine": "^7.0.0",
   "jsdoc": "^4.0.5",
   "karma": "^6.4.4",
   "karma-chrome-launcher": "^3.2.0",
   "karma-coverage": "^2.2.1",
   "karma-firefox-launcher": "^2.1.3",
   "karma-jasmine": "^5.1.0",
-  "karma-jasmine-html-reporter": "^2.2.0",
-  "karma-spec-reporter": "^0.0.36",
-  "lint-staged": "^15.5.2",
-  "terser": "^5.49.2"
+  "karma-jasmine-html-reporter": "^2.3.0",
+  "karma-spec-reporter": "^0.0.37",
+  "lint-staged": "^17.6.0",
+  "terser": "^5.51.2"
  }
 }
