@@ -34,6 +34,18 @@ const reporters = [
 ];
 let coverageReporter;
 
+// GitHub hosted runners confine unprivileged user namespaces with AppArmor, so Chromium's
+// sandbox cannot initialise there: ChromiumHeadless aborts in zygote_host_impl_linux.cc
+// with "No usable sandbox!" before a single page loads. See
+// https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+// The flag is limited to CI so local runs keep the renderer sandbox.
+const customLaunchers = {
+	ChromiumHeadlessNoSandbox: {
+		base: 'ChromiumHeadless',
+		flags: process.env.GITHUB_ACTIONS === 'true' ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
+	},
+};
+
 // note coverage doesn't work since it doesn't support es6 without a transpiler, will need to wait for a truly es6 compatible coverage tool
 if (runSettings.coverage) {
 	preprocessors['src/!third_party/**/*.js'] = ['coverage'];
@@ -99,6 +111,7 @@ module.exports = function(config) {
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 		browsers: ['Chromium', 'Firefox'],
+		customLaunchers,
 
 		// Concurrency level
 		// how many browser should be started simultaneous
